@@ -1,4 +1,5 @@
 import scrapy
+from meetings.items import MeetingLinks, aaMeetings
 
 
 class AaSpider(scrapy.Spider):
@@ -12,11 +13,24 @@ class AaSpider(scrapy.Spider):
 
         the get() method will return one and getall() returns all the
         specified response tags"""
+        # creating a logger:
+        self.logger.info("A response from %s just arrived!", response.url)
         # retrieving the title using CSS
         # title = response.css('span.title::text').get()
 
         # retrieving the title using xpath
-        title = response.xpath('//span[@class="title"]/text()').get()
+        # title = response.xpath('//span[@class="title"]/text()').get()
 
-        title = response.xpath()
-        return {"title": title}
+        # get links to each state:
+        state_links = response.xpath(
+            '//div[@class="col-md-3 col-6 single-item"]//a/@href').getall()
+
+        # create for loop to store items
+        for link in state_links:
+            yield MeetingLinks(links=link)
+
+        # title = response.xpath()
+        # state_links = response.xpath()
+
+        # # return {"title": title, "state_links": state_links}
+        # return {"state_links": state_links}

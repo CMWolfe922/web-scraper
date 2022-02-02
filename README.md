@@ -34,3 +34,30 @@ scrapy genspider {spider_name} {website.com}
 ```sh
 scrapy runspider {spidername.py}
 ```
+
+## UNDERSTANDING xpath:
+
+-- X paths are kind of like the regular expressions of html.
+
+- So if I want to navigate to a particular tag in html I can use:
+  - `/html/body/div/h1`
+  - This is annoying, because then I have to go through each tag on the page until I get to the h1 tag. So what if I want to just go straight to h1?
+- USE A DOUBLE SLASH '//' This will allow me to go directly to whichever tag I list
+  `//h1` will grab all the h1 tags
+
+`//div/h1` --> grabs only the h1 tags that are immediate children of the div tag
+
+`//div//h1` --> grabs any h1 tag that falls under a div tag, regardless of whether or not it is an immediate child of the div tag
+
+- Now lets use attribute selection with xpath:
+  - Elements are selected by attribute by using the @ symbol:
+
+`//span[@class="title"]` --> Selects any span tags that have the class title or if the attribute of the span tag is equal to the string title
+
+You can also select the text from the attribute of the tags themselves, so if I wanted to select the `id` attribute I would:
+
+- `//span[@class="title"]@id` --> and this will select the value of the id attribute where the class value is title
+
+### aa-meetings.com xpath selectors:
+
+- xpath to select all the state links: //div[@class="col-md-3 col-6 single-item"]/a

@@ -25,7 +25,7 @@ class MarketnewsSpider(CrawlSpider):
 
     def parse_info(self, response):
         """Create the items to scrape from each url using xpath"""
-        article = Articles()
+        articles = Articles()
 
         articles['title'] = response.xpath('//h1[@class="ArticleHeader-headline"]/text()')
         articles['url'] = response.url

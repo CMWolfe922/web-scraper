@@ -14,6 +14,12 @@ class WikipediaSpider(CrawlSpider):
     # -------------------- Create regex pattern to follow correct urls -------------------- #
     url_pattern = 'wiki/((?!:).)*$'
 
+    # ---------------------- Create custom settings for this spider ----------------------- #
+    custom_settings = {
+        'FEED_URI': 'articles.csv',  # This can be json, or xml
+        'FEED_FORMAT': 'csv',  # json or xml
+        'CLOSESPIDER_PAGECOUNT': 10
+    }
     # ------------------ I need to create rules for the spider to follow ------------------ #
     rules = [Rule(LinkExtractor(allow=url_pattern),
                   callback='parse_info', follow=True)]

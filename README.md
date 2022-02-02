@@ -1,8 +1,8 @@
 # WEB SCRAPER
 
-## -- This project is to build a web scraping interface using python. One that will be easy to implement using a GUI.
+## -- This project is to build a web scraping interface using python. One that will be easy to implement using a GUI
 
-## Creating a Spider:
+## Creating a Spider
 
 -- In order to create a spider, first access the spider directory from the command line. Then use the following command:
 
@@ -12,7 +12,7 @@ scrapy genspider {spider_name} {website.com}
 
 ---
 
-### The Parse Method Inside Our Spider:
+### The Parse Method Inside Our Spider
 
 ```sh
     def parse(self, response):
@@ -39,7 +39,7 @@ scrapy runspider {spidername.py}
 
 ---
 
-## UNDERSTANDING xpath:
+## UNDERSTANDING xpath
 
 -- X paths are kind of like the regular expressions of html.
 
@@ -64,20 +64,20 @@ You can also select the text from the attribute of the tags themselves, so if I 
 
 ---
 
-### aa-meetings.com xpath selectors:
+### aa-meetings.com xpath selectors
 
 - xpath to select all the state links: //div[@class="col-md-3 col-6 single-item"]/a
 
 ---
 
-# CREATING A CRAWLER:
+## CREATING A CRAWLER
 
 - To do this I will first make a basic crawler for wikipedia.
   - Create the spider by calling `scrapy genspider wikipedia en.wikipedia.org`
 
 1. First, we will extend scrapy's CrawlSpider class:
 
-- To do this we have to import CrawlSpider from scrapy.spiders and import Rule
+   - To do this we have to import CrawlSpider from scrapy.spiders and import Rule
 
 ```sh
 import scrapy
@@ -118,7 +118,7 @@ class WikipediaSpider(CrawlSpider):
                   callback='parse_info', follow=True)]
 ```
 
-### STORING THE SCRAPED DATA:
+## STORING SCRAPED DATA
 
 - The easiest way to do this is by adding a few extra commands to the command line:
   `scrapy runspider wikipedia.py -o articles.csv -t csv'
@@ -126,3 +126,15 @@ class WikipediaSpider(CrawlSpider):
 
 - Also, if you want to set a limit to the number of pages to crawl use
   `scrapy runspider wikipedia.py -o articles.csv -t csv -s CLOSESPIDER_PAGECOUNT={num pages}'
+
+## SETTINGS: Creating Custom Settings
+
+> You can create custom settings for each spider by defining the `custom_settings` in the spider class. Some of those settings look like this:
+
+```sh
+   custom_settings = {
+        'FEED_URI': 'articles.csv',  # This can be json, or xml
+        'FEED_FORMAT': 'csv',  # json or xml
+        'CLOSESPIDER_PAGECOUNT': 10
+    }
+```

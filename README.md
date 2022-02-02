@@ -117,3 +117,12 @@ class WikipediaSpider(CrawlSpider):
     rules = [Rule(LinkExtractor(allow=url_pattern),
                   callback='parse_info', follow=True)]
 ```
+
+### STORING THE SCRAPED DATA:
+
+- The easiest way to do this is by adding a few extra commands to the command line:
+  `scrapy runspider wikipedia.py -o articles.csv -t csv'
+  --> you can also use -t json or xml
+
+- Also, if you want to set a limit to the number of pages to crawl use
+  `scrapy runspider wikipedia.py -o articles.csv -t csv -s CLOSESPIDER_PAGECOUNT={num pages}'

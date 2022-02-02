@@ -6,13 +6,17 @@
 import scrapy
 
 
-class MeetingsItem(scrapy.Item):
+class Articles(scrapy.Item):
     # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    title = scrapy.Field()
+    url = scrapy.Field()
+    author = scrapy.Field()
+    body = scrapy.Field()
+    publishDate = scrapy.Field()
+    lastUpdated = scrapy.Field()
 
 
-class aaMeetings(scrapy.Item):
+class Meetings(scrapy.Item):
     name = scrapy.Field()
     address = scrapy.Field()
     city = scrapy.Field()

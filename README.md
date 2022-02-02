@@ -1,6 +1,6 @@
 # WEB SCRAPER
 
--- This project is to build a web scraping interface using python. One that will be easy to implement using a GUI.
+## -- This project is to build a web scraping interface using python. One that will be easy to implement using a GUI.
 
 ## Creating a Spider:
 
@@ -9,6 +9,8 @@
 ```sh
 scrapy genspider {spider_name} {website.com}
 ```
+
+---
 
 ### The Parse Method Inside Our Spider:
 
@@ -35,6 +37,8 @@ scrapy genspider {spider_name} {website.com}
 scrapy runspider {spidername.py}
 ```
 
+---
+
 ## UNDERSTANDING xpath:
 
 -- X paths are kind of like the regular expressions of html.
@@ -58,6 +62,58 @@ You can also select the text from the attribute of the tags themselves, so if I 
 
 - `//span[@class="title"]@id` --> and this will select the value of the id attribute where the class value is title
 
+---
+
 ### aa-meetings.com xpath selectors:
 
 - xpath to select all the state links: //div[@class="col-md-3 col-6 single-item"]/a
+
+---
+
+# CREATING A CRAWLER:
+
+- To do this I will first make a basic crawler for wikipedia.
+  - Create the spider by calling `scrapy genspider wikipedia en.wikipedia.org`
+
+1. First, we will extend scrapy's CrawlSpider class:
+
+- To do this we have to import CrawlSpider from scrapy.spiders and import Rule
+
+```sh
+import scrapy
+from scrapy.spiders import CrawlSpider, Rule
+from scrapy.linkextractors import LinkExtractor
+
+class WikipediaSpider(CrawlSpider):
+    name = 'wikipedia'
+    allowed_domains = ['en.wikipedia.org']
+    start_urls = ['https://en.wikipedia.org/wiki/Kevin_Bacon']
+
+    def parse(self, response):
+        pass
+```
+
+2. Now we need to fill in what we want to extract from each page:
+
+```sh
+    def parse(self, response):
+        return {
+            'title': response.xpath('//h1/text()').get() or response.xpath('//h1/i/text()').get(), # The i is for italicized because movie and article titles are italicized
+            'url':response.url,
+            'last_edited': response.xpath('//li[@id="footer-info-lastmod"]/text()').get()
+
+        }
+```
+
+- Now all we have is something that looks very similar to what the aa spider does. But in order to make a spider a crawler, it needs to have rules. and those rules will guide the spider while it crawls webpages extracting data.
+
+- Below is an example of how to setup a crawlers rules:
+
+```sh
+    # -------------------- Create regex pattern to follow correct urls -------------------- #
+    url_pattern = 'wiki/((?!:).)*$'
+
+    # ------------------ I need to create rules for the spider to follow ------------------ #
+    rules = [Rule(LinkExtractor(allow=url_pattern),
+                  callback='parse_info', follow=True)]
+```

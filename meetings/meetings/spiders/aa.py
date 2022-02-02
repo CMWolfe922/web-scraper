@@ -28,9 +28,3 @@ class AaSpider(scrapy.Spider):
         # create for loop to store items
         for link in state_links:
             yield MeetingLinks(links=link)
-
-        # title = response.xpath()
-        # state_links = response.xpath()
-
-        # # return {"title": title, "state_links": state_links}
-        # return {"state_links": state_links}

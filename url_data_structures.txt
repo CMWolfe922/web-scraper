@@ -1,0 +1,48 @@
+============================================================================
+------ WEBSITE DATA STRUCTURES FOR WEBSCRAPING WITH SCRAPY CRAWLERS --------
+============================================================================
+- I will print an example of how the data shows up on the source files. 
+so that I can copy and past and make xpath selectors more quickly. 
+
+
+============================================================================
+-------------------------------- CNBC.COM ----------------------------------
+============================================================================
+------------------https://www.cnbc.com/sitemap_news.xml---------------------
+
+<url>
+<loc>https://www.cnbc.com/2022/02/02/how-apple-earnings-can-grow-even-if-iphone-growth-goes-to-zero-.html</loc>
+<n:news>
+<n:keywords>Earnings,Stock markets,Technology</n:keywords>
+<n:publication>
+<n:name>CNBC</n:name>
+<n:language>en</n:language>
+</n:publication>
+<n:genres/>
+<n:stock_tickers>AAPL,GOOGL</n:stock_tickers>
+<n:title>'This is a big deal': How Apple earnings can grow even if iPhone growth goes to zero </n:title>
+<n:publication_date>2022-02-02T10:26:00-04:00</n:publication_date>
+</n:news>
+</url>
+
+--------------------------- https://www.cnbc.com/ ----------------------------
+
+Latest News 
+//*[@id="Homepage-latestNews-8-0"]/div/div/a
+
+KeyPoints
+//*[@id="SpecialReportArticle-KeyPoints-5"]/div/div[2]/div/div/ul/li[1]/text()
+//*[@id="SpecialReportArticle-KeyPoints-5"]/div/div[2]/div/div/ul/li[2]/text()
+//*[@id="RegularArticle-KeyPoints-4"]/div/div[2]/div/div/ul/li[1]/text()
+
+Body 
+//*[@id="SpecialReportArticle-ArticleBody-6"]//div//p/text()
+
+//*[@id="RegularArticle-ArticleBody-5"]/div//p/text()
+
+Author 
+//*[@id="main-article-header"]/div/div[2]/div[1]/div/div/div/div/a/text()
+//*[@class="Author-authorName"]/text()
+
+title
+//h1[@class="ArticleHeader-headline"]/text()

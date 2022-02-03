@@ -1,0 +1,11 @@
+NOTES FOR EXTRACTING THE MEETINGS DATA FOR AA, NA, AND ALANON
+=================================================================
+
+# retrieving the title using CSS
+# title = response.css('span.title::text').get()
+
+# retrieving the title using xpath
+# title = response.xpath('//span[@class="title"]/text()').get()
+
+--> Website to get AA meetings from: https://www.aa-meetings.com/ and the
+structure of the website is going to determine how to use the crawlers.

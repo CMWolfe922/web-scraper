@@ -2,7 +2,8 @@ import scrapy
 from meetings.items import Links, Meetings
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
-
+from scrapy.selector import Selector
+from scrapy.http import HtmlRespone
 # retrieving the title using CSS
 # title = response.css('span.title::text').get()
 
@@ -20,15 +21,14 @@ class AaSpider(CrawlSpider):
     url_patterns = 'a{2}\-\w+\/((page\/\d*\/$)|(\w*.\w*)*)'
     custom_settings = {
         'FEED_URI': 'meetings.csv',  # This can be json, or xml
-        'FEED_FORMAT': 'csv',  # json or xml
-        'CLOSESPIDER_PAGECOUNT': 3000
+        'FEED_FORMAT': 'csv'
     }
     # create rules for the spider to follow
     rules = [Rule(LinkExtractor(allow=url_patterns),
                   callback='parse_info', follow=True)]
 
-    def start_requests(self):
-        yield self.make_requests_from_url(start_urls)
+    # def start_requests(self, start_urls):
+    #     yield self.make_requests_from_url(start_urls)
 
     def parse_info(self, response):
         # creating a logger:

@@ -2,15 +2,20 @@ import scrapy
 from meetings.items import MeetingLinks, Meetings
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
-from meetings.items import Articles
+from meetings.items import Meetings
 
-
-class AaSpider(scrapy.Spider):
+class AaSpider(CrawlSpider):
     name = 'aa'
     allowed_domains = ['aa-meetings.com']
-    start_urls = ['http://aa-meetings.com/']
+    start_urls = ['https://www.aa-meetings.com/aa-meeting/']
 
-    def parse(self, response):
+    url_patterns = 'aa-meetings/'
+
+    def start_requests(self):
+        yield self.make_requests_from_url("https://www.aa-meetings.com/aa-meeting/")
+
+    hxs = HtmlXPathSelector(response)
+    def parse_info(self, response):
         """this will parse the website data and return whatever data
         we specify using either a css selector or xpath  selector.
 
@@ -21,7 +26,7 @@ class AaSpider(scrapy.Spider):
         self.logger.info("A response from %s was received: ", response.url)
     # ---------------------- Create custom settings for this spider ----------------------- #
         custom_settings = {
-            'FEED_URI': 'articles.csv',  # This can be json, or xml
+            'FEED_URI': 'meetings.csv',  # This can be json, or xml
             'FEED_FORMAT': 'csv',  # json or xml
             'CLOSESPIDER_PAGECOUNT': 10
         }

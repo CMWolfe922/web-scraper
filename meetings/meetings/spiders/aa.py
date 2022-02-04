@@ -3,7 +3,7 @@ from meetings.items import Links, Meetings
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
 from scrapy.selector import Selector
-from scrapy.http import HtmlRespone
+from scrapy.http import HtmlResponse
 # retrieving the title using CSS
 # title = response.css('span.title::text').get()
 
@@ -34,16 +34,29 @@ class AaSpider(CrawlSpider):
         # creating a logger:
         self.logger.info("A response from %s was received: ", response.url)
         # --------------------------- Create an Meetngs object ---------------------------- #
-        meeting = Meetings()
-        meeting['name'] = response.xpath("//div[@class='fui-card-body']//h4//a/text()").getall()
-        meeting['address'] = response.xpath("//div[@class='fui-card-body']//address[@class='weight-300']/text()").getall()
-        meeting['city'] = response.xpath("//p[@class='weight-300']//a/text()").getall()
-        meeting['cityStateZip'] = response.xpath("//div[@class='fui-card-body']/h4/p/text()").getall()
-        meeting['locationName'] = response.xpath("//div[@class='fui-card-body']//p/text()").getall()
-        meeting['time'] = response.xpath("//table[@class='table fui-table']/td/text()").getall()
-        meeting['days'] = response.xpath("//table[@class='table fui-table']/td/text()").getall()
-        meeting['type'] = response.xpath("//table[@class='table fui-table']/td/text()").getall()
-        meeting['rules'] = response.xpath("//table[@class='table fui-table']/td/text()").getall()
+        item = Meetings()
 
-        # get each meetings url
-        meeting['url'] = response.url
+        item['name'] = response.xpath("//div[@class='fui-card-body']//h4//a/text()").getall()
+        item['address'] = response.xpath("//div[@class='fui-card-body']//address[@class='weight-300']/text()").getall()
+        item['city'] = response.xpath("//p[@class='weight-300']//a/text()").getall()
+        item['cityStateZip'] = response.xpath("//div[@class='fui-card-body']/h4/p/text()").getall()
+        item['locationName'] = response.xpath("//div[@class='fui-card-body']//p/text()").getall()
+        item['time'] = response.xpath("//table[@class='table fui-table']/td/text()").getall()
+        item['days'] = response.xpath("//table[@class='table fui-table']/td/text()").getall()
+        item['type'] = response.xpath("//table[@class='table fui-table']/td/text()").getall()
+        item['rules'] = response.xpath("//table[@class='table fui-table']/td/text()").getall()
+
+        # get each items url
+        item['url'] = response.url
+        yield item
+
+    # def parse_info(self, response):
+    #     # creating a logger:
+    #     self.logger.info("A response from %s was received: ", response.url)
+    #         # --------------------------- Create an Meetngs object ---------------------------- #
+    #     item = Meetings()
+    #     item['name'] = []
+    #     item['name'] = response.xpath("//div[@class='fui-card-body']//h4//a/text()").get()
+    #     for name in response.xpath("//div[@class='fui-card-body']//h4//a/text()").get():
+    #         item['name'].append(name)
+    #         yield item

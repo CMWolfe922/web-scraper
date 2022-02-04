@@ -26,7 +26,8 @@ class Meetings(scrapy.Item):
     days = scrapy.Field()
     type = scrapy.Field()
     rules = scrapy.Field()
+    url = scrapy.Field()
 
 
-class MeetingLinks(scrapy.Item):
+class Links(scrapy.Item):
     links = scrapy.Field()

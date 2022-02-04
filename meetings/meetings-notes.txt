@@ -43,16 +43,16 @@ match the below url's pattern and the one below that with the meetings and no ot
     * I need to figure out the regex for this layout
 ===============================================================================================================
 meetingName --> //div[@class="fui-card-body"]//h4//a/text() (main page before clicking on meetings link)
-City --> //p[@class="weight-300"]//a/text() (meetings pages)
-State, city and zip --> //div[@class="fui-card-body"]/h4/p/text() (main page before clicking on meetings link)
-Address --> //div[@class="fui-card-body"]//address[@class="weight-300"]/text() (meetings pages)
-LocationName --> //div[@class="fui-card-body"]//p/text()  (meetings pages)
-Details --> //div[@class="fui-card-header"]/text()  (meetings pages) Hopefully it grabs all
+City --> //p[@class='weight-300']//a/text() (meetings pages)
+State, city and zip --> //div[@class='fui-card-body']/h4/p/text() (main page before clicking on meetings link)
+Address --> //div[@class='fui-card-body']//address[@class='weight-300']/text() (meetings pages)
+LocationName --> //div[@class='fui-card-body']//p/text()  (meetings pages)
+Details --> //div[@class='fui-card-header']/text()  (meetings pages) Hopefully it grabs all
 the text that is between each element under this div tag.
-meetDays --> //table[@class="table fui-table"]/td/text() (meetings pages)
-meetTime --> //table[@class="table fui-table"]/td/text() (meetings pages)
-meetingRules --> //table[@class="table fui-table"]/td/text() (meetings pages)
-meetingType --> //table[@class="table fui-table"]/td/text() (meetings pages)
+meetDays --> //table[@class='table fui-table']/td/text() (meetings pages)
+meetTime --> //table[@class='table fui-table']/td/text() (meetings pages)
+meetingRules --> //table[@class='table fui-table']/td/text() (meetings pages)
+meetingType --> //table[@class='table fui-table']/td/text() (meetings pages)
 
 
 

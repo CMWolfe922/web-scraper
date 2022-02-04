@@ -9,5 +9,6 @@ from itemadapter import ItemAdapter
 
 
 class MeetingsPipeline:
+
     def process_item(self, item, spider):
         return item

@@ -18,7 +18,7 @@ class AaSpider(CrawlSpider):
     allowed_domains = ['aa-meetings.com']
     start_urls = ['https://www.aa-meetings.com/aa-meeting/']
     # Create regex pattern to follow correct urls
-    url_patterns = 'a{2}\-\w+\/((page\/\d*\/$)|(\w*.\w*)*)'
+    url_patterns = 'a{2}\-\w+\/((page\/\d*\/$)|([a-zA-Z0-9]*-[a-zA-Z0-9]+)+\/$)'
     custom_settings = {
         'FEED_URI': 'meetings.csv',  # This can be json, or xml
         'FEED_FORMAT': 'csv'
@@ -50,6 +50,10 @@ class AaSpider(CrawlSpider):
         item['url'] = response.url
         yield item
 
+        def parse_name(self, response):
+            item = Meetings()
+
+            item['name'] = response.xpath()
     # def parse_info(self, response):
     #     # creating a logger:
     #     self.logger.info("A response from %s was received: ", response.url)

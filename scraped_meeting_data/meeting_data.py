@@ -21,6 +21,18 @@ def csv_parser(csv_reader, header: str):
     return data_list
 
 
+def dict_csv_writer(data: dict):
+    # empty list to append individual data to
+    dict_list = []
+
+    # Now loop through the CSV file and append to the data list:
+    for k, v in data.items():
+        for i in range(len(v)):
+            row_data = {k: v[i]}
+            dict_list.append(row_data)
+    print(dict_list)
+
+
 csv_filename = 'scraped_meeting_data/meetings.csv'
 states = {
     'AK': 'Alaska',
@@ -75,8 +87,6 @@ states = {
     'WV': 'West Virginia',
     'WY': 'Wyoming'
 }
-address_ending_strings = ['Ave', 'Blvd', 'Street', 'Dr',
-                          'Ln', 'Rd', 'Road', 'Highway', 'Hwy', 'Pkwy', 'St']
 
 
 def meeting_data_scraper(link_list):
@@ -134,6 +144,9 @@ def meeting_data_scraper(link_list):
 
     return data
 
+# TODO: Take all the data at each key[value][index] position and create a dict for each
+# index postion, then append that dict to an array of dicts
+
 
 if __name__ == "__main__":
     # program start:
@@ -147,9 +160,10 @@ if __name__ == "__main__":
     # Now use the scraper function to scrape each link in that list
     # and store the data in the d variable for dict
     d = meeting_data_scraper(link_list)
-
-    # print d to show it worked
-    print(d)
+    dict_csv_writer(d)
+    # Open CSV file to append data to:
+    # with open('meetings.csv', 'w') as f:
+    #     csv_writer = csv.DictWriter(f, field_names=list(d.keys()))
 
     # end of program timer
     end = time.time()

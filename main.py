@@ -2,7 +2,7 @@
 # items to a mysql database
 
 from __future__ import print_function
-from mysql.connector import errorcode
+from mysql.connector import Error
 import mysql.connector
 from sqlalchemy import create_engine
 import sqlalchemy as sa
@@ -34,7 +34,6 @@ class MysqlTest:
     #     print("[+] Engine Created...")
     #     return engine
 
-
     # def mysql_connect(self):
     #     try:
     #         return mysql.connector.connect(MysqlTest.config)
@@ -58,7 +57,6 @@ class MysqlTest:
             cursor.close()
         except Error as err:
             print(err)
-
 
     def insert_items(self, values):
         try:

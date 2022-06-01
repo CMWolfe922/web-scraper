@@ -124,16 +124,6 @@ def meeting_data_scraper(link):
 
     get_table_data(soup, data)
 
-    # Get the details now: Start with schedule
-    # schedule_table = soup.find('table', class_='table fui-table')
-    # schedule_table = soup.find('table', class_='table fui-table')
-    # table_head = schedule_table.find('tr')
-    # table_row = table_head.find_next('tr')
-    # day = table_row.find_next('td')
-    # time = day.find_next('td')
-    # info = time.find_next('td')
-    # print(day)
-
 
 csv_filename = 'scraped_meeting_data/meetings.csv'
 states = {

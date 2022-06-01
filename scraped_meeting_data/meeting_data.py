@@ -123,7 +123,8 @@ def meeting_data_scraper(link_list):
     ], 'day': [], 'time': [], 'info': []}
 
     # start for loop:
-    for i in range(len(link_list)):
+    # for i in range(len(link_list)):
+    for i in range(0, 200):
         # get the requests object from the link
         page = requests.get(link_list[i])
         soup = bs(page.text, "lxml")

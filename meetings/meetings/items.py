@@ -20,11 +20,14 @@ class Meetings(scrapy.Item):
     name = scrapy.Field()
     address = scrapy.Field()
     city = scrapy.Field()
-    state = scrapy.Field()
-    zip_code = scrapy.Field()
-    start_time = scrapy.Field()
-    day_available = scrapy.Field()
+    cityStateZip = scrapy.Field()
+    locationName = scrapy.Field()
+    time = scrapy.Field()
+    days = scrapy.Field()
+    type = scrapy.Field()
+    rules = scrapy.Field()
+    url = scrapy.Field()
 
 
-class MeetingLinks(scrapy.Item):
+class Links(scrapy.Item):
     links = scrapy.Field()

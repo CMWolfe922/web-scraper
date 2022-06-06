@@ -1,0 +1,58 @@
+NOTES FOR EXTRACTING THE MEETINGS DATA FOR AA, NA, AND ALANON
+=================================================================
+
+# retrieving the title using CSS
+# title = response.css('span.title::text').get()
+
+# retrieving the title using xpath
+# title = response.xpath('//span[@class="title"]/text()').get()
+
+--> Website to get AA meetings from: https://www.aa-meetings.com/ and the
+structure of the website is going to determine how to use the crawlers.
+    |
++-->+ --> State Url structure: https://www.aa-meetings.com/aa-meeting-location/alabama/
+|        I need to use this structure and create a regex that matches this so the spider
+|        will only follow urls that look like this.
+|           |
++<----- +-->+ --> City URL Structure: https://www.aa-meetings.com/aa-meeting-location/abanda-alabama/
+        |       This is where the crawler will see all the cities for each state. There is a link for each city
+        |       once the crawler clicks on the link, it will then see this:
+        |       |
+        +<------+ --> Meeting URL Structure: https://www.aa-meetings.com/aa-meeting/roanoke-group/
+                Here the crawler will be able to find the meeting Name, Days they meet, time of meeting, City,
+                Address, location name, and details
+
+               * This is where the crawler needs to stop, go back to the previous page, find the next meeting,
+                follow that link, get the same information as above, then repeat until every meeting page has been
+                checked and scraped.
+
+               * Then the crawler needs to return to the state URL and go to the next city.
+               Once it is complete scraping each city's meetings in one state, then it needs
+               to move to the return to the state URL and restart the process.
+============================================================================================================
+- The Crawlers will be following a new path. They will only use these two URL structures:
+--> https://www.aa-meetings.com/aa-meeting/
+* This is the first page that the crawler should start at. From here look for urls that
+match the below url's pattern and the one below that with the meetings and no other urls
+
+--> https://www.aa-meetings.com/aa-meeting/page/2/
+    --> https://www.aa-meetings.com/aa-meeting/page/{number}/
+
+--> https://www.aa-meetings.com/aa-meeting/see-why-serenity-group/
+    --> https://www.aa-meetings.com/aa-meeting/{name-of-the-meeting}/
+    * I need to figure out the regex for this layout
+===============================================================================================================
+meetingName --> //div[@class="fui-card-body"]//h4//a/text() (main page before clicking on meetings link)
+City --> //p[@class='weight-300']//a/text() (meetings pages)
+State, city and zip --> //div[@class='fui-card-body']/h4/p/text() (main page before clicking on meetings link)
+Address --> //div[@class='fui-card-body']//address[@class='weight-300']/text() (meetings pages)
+LocationName --> //div[@class='fui-card-body']//p/text()  (meetings pages)
+Details --> //div[@class='fui-card-header']/text()  (meetings pages) Hopefully it grabs all
+the text that is between each element under this div tag.
+meetDays --> //table[@class='table fui-table']/td/text() (meetings pages)
+meetTime --> //table[@class='table fui-table']/td/text() (meetings pages)
+meetingRules --> //table[@class='table fui-table']/td/text() (meetings pages)
+meetingType --> //table[@class='table fui-table']/td/text() (meetings pages)
+
+
+

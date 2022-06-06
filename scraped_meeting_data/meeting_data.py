@@ -5,105 +5,70 @@ from bs4 import BeautifulSoup as bs
 import pandas as pd
 import time
 import lxml
+from concurrent.futures import ThreadPoolExecutor
+from multiprocessing.pool import Pool
+
+# TODO: CREATE FUNCTION THAT EXTRACTS LINKS FROM CSV AND RETURNS LIST:
 
 
-def csv_parser(csv_reader, header: str):
-    _header = next(csv_reader)
-    headerIndex = _header.index(header)
+def get_links(csv_filename):
+    with open(csv_filename, 'r') as f:
+        csv_reader = csv.reader(f)
+        link_list = csv_parser(csv_reader, 'link')
+    return link_list
 
-    # now create an empty list to append the addresses to
-    data_list = []
-
-    # loop through CSV file and append to address_list
-    for line in csv_reader:
-        all_data = line[headerIndex]
-        data_list.append(all_data)
-    return data_list
+# TODO: CREATE FUNCTION THAT WILL GET THE PAGE CONTENTS AND CREATE SOUP OBJ:
 
 
-def dict_csv_writer(data: dict):
-    # empty list to append individual data to
-    dict_list = []
+def fetch_soup_data(link):
+    page = requests.get(link)
+    soup = bs(page.text, 'lxml')
+    return soup
 
-    # Now loop through the CSV file and append to the data list:
-    for k, v in data.items():
-        for i in range(len(v)):
-            row_data = {k: v[i]}
-            dict_list.append(row_data)
-    print(dict_list)
+# TODO: CREATE FUNCTION THAT WILL RETRIEVE THE ADDRESS DATA AND RETURN DICT:
 
 
-csv_filename = 'scraped_meeting_data/meetings.csv'
-states = {
-    'AK': 'Alaska',
-    'AL': 'Alabama',
-    'AR': 'Arkansas',
-    'AZ': 'Arizona',
-    'CA': 'California',
-    'CO': 'Colorado',
-    'CT': 'Connecticut',
-    'DC': 'District of Columbia',
-    'DE': 'Delaware',
-    'FL': 'Florida',
-    'GA': 'Georgia',
-    'HI': 'Hawaii',
-    'IA': 'Iowa',
-    'ID': 'Idaho',
-    'IL': 'Illinois',
-    'IN': 'Indiana',
-    'KS': 'Kansas',
-    'KY': 'Kentucky',
-    'LA': 'Louisiana',
-    'MA': 'Massachusetts',
-    'MD': 'Maryland',
-    'ME': 'Maine',
-    'MI': 'Michigan',
-    'MN': 'Minnesota',
-    'MO': 'Missouri',
-    'MS': 'Mississippi',
-    'MT': 'Montana',
-    'NC': 'North Carolina',
-    'ND': 'North Dakota',
-    'NE': 'Nebraska',
-    'NH': 'New Hampshire',
-    'NJ': 'New Jersey',
-    'NM': 'New Mexico',
-    'NV': 'Nevada',
-    'NY': 'New York',
-    'OH': 'Ohio',
-    'OK': 'Oklahoma',
-    'OR': 'Oregon',
-    'PA': 'Pennsylvania',
-    'RI': 'Rhode Island',
-    'SC': 'South Carolina',
-    'SD': 'South Dakota',
-    'TN': 'Tennessee',
-    'TX': 'Texas',
-    'UT': 'Utah',
-    'VA': 'Virginia',
-    'VT': 'Vermont',
-    'WA': 'Washington',
-    'WI': 'Wisconsin',
-    'WV': 'West Virginia',
-    'WY': 'Wyoming'
-}
+def get_address_data(soup):
 
-
-def meeting_data_scraper(link_list):
-
-    def get_address_data(soup, data):
+    try:
         address_tag = soup.address
-        data['address'].append(address_tag.contents[1])
+        address = address_tag.contents[1]
+
         meeting_name = soup.find(
             'div', class_='fui-card-body').find(class_='weight-300')
-        data['name'].append(meeting_name.contents[1])
-        city_tag = meeting_name.find_next('a')
-        data['city'].append(city_tag.contents[0])
-        state_tag = city_tag.find_next('a')
-        data['state'].append(state_tag.contents[0])
-        return data
+        name = meeting_name.contents[1]
 
-    def get_table_data(soup, data):
+        city_tag = meeting_name.find_next('a')
+        city = city_tag.contents[0]
+
+        state_tag = city_tag.find_next('a')
+        state = state_tag.contents[0]
+        return {'name': name, 'address': address, 'city': city, 'state': state}
+
+    except IndexError as ie:
+        print(f"Index Error: {ie}")
+        try:
+            return {'name': name, 'address': address, 'city': city, 'state': 'state'}
+        except UnboundLocalError as ule:
+            print(f"UnboundLocalError: {ule}")
+        try:
+            return {'name': name, 'address': address, 'city': 'city', 'state': state}
+        except UnboundLocalError as ule:
+            print(f"UnboundLocalError: {ule}")
+        try:
+            return {'name': name, 'address': 'address', 'city': city, 'state': state}
+        except UnboundLocalError as ule:
+            print(f"UnboundLocalError: {ule}")
+        try:
+            return {'name': 'name', 'address': address, 'city': city, 'state': state}
+        except UnboundLocalError as ule:
+            print(f"UnboundLocalError: {ule}")
+
+# TODO: CREATE FUNCTION THAT WILL RETRIEVE THE DETAILS DATA FROM AN HTML TABLE:
+
+
+def get_table_data(soup):
+    try:
         info_table = soup.find('table', class_='table fui-table')
         # obtain all the columns from <th>
         headers = []
@@ -117,50 +82,98 @@ def meeting_data_scraper(link_list):
         # Now create the foor loop to fill dataframe
         # a row is under the <tr> tags and data under the <td> tags
         for j in info_table.find_all('tr')[1:]:
+            # if info_table.find_all('tr')[1:] == AttributeError.NoneType:
+            #     print("No info table found")
             row_data = j.find_all('td')
             row = [i.text for i in row_data]
             length = len(df)
             df.loc[length] = row
 
-        data['day'].append(df['day'].to_list())
-        data['time'].append(df['time'].to_list())
-        data['info'].append(df['info'].to_list())
+        # data['day'].append(df['day'].to_list())
+        # data['time'].append(df['time'].to_list())
+        # data['info'].append(df['info'].to_list())
+        day = df['day'].to_list()
+        time = df['time'].to_list()
+        info = df['info'].to_list()
 
         # now return data
-        return data
+        return {'day': day, 'time': time, 'info': info}
 
-    _data = {'name': [], 'address': [], 'city': [], 'state': [], 'zip_code': [
-    ], 'day': [], 'time': [], 'info': []}
+    except AttributeError as ae:
+        print(f"info_table.find_all('tr')[1:] raised error: {ae}")
+        return {'day': 'day', 'time': 'time', 'info': 'info'}
 
-    # start for loop:
-    # for i in range(len(link_list)):
-    for i in range(0, 200):
-        # get the requests object from the link
-        page = requests.get(link_list[i])
-        soup = bs(page.text, "lxml")
+# TODO: PASS THOSE TWO DICTS TO A FUNCTION THAT WILL PARSE AND COMBINE THEM:
 
-        data = get_address_data(soup, _data)
-        data = get_table_data(soup, data)
 
-    return data
+def meeting_row_parser(item0, item1):
+    """
+    :param item0: This is the address data in a dictionary. Use the following keys to access
+    the data -> Keys: 'name' - 'address' - 'city' - 'state'
+    :param item1: This is the meeting details data in a dictionary. Use the following keys to
+    access the data -> Keys: 'day' - 'time' - 'info'
 
-# TODO: Take all the data at each key[value][index] position and create a dict for each
-# index postion, then append that dict to an array of dicts
+    create a final dictionary that will be used to store the information in the database as one row.
+    I will need to join the list items to create one string with a | seperating each item so I can
+    split the string when retrieving the data.
+    """
+    row = {}
+    try:
+        row['name'] = item0['name']
+        row['address'] = item0['address']
+        row['city'] = item0['city']
+        row['state'] = item0['state']
+    except Exception as e:
+        print(e)
+        row['name'] = 'name'
+        row['address'] = 'address'
+        row['city'] = 'city'
+        row['state'] = 'state'
 
+    # now add item1 to the row data
+    row['day'] = ' | '.join(item1['day'])
+    row['time'] = ' | '.join(item1['time'])
+    row['info'] = ' | '.join(item1['info'])
+
+    # now return the row data dictionary
+    return row
+
+# TODO: CREATE A FUNCTION THAT WILL WRITE EACH ITEM IN THE ROW_DATA LIST TO A CSV FILE
+# SAVING THE ROW VALUES IN THEIR KEY'S COLUMN:
+
+
+def convert_row_data_to_csv(row_data):
+    with open('meeting_details.csv', 'w') as csvfile:
+        for d in row_data:
+            csvwriter = csv.DictWriter(
+                csvfile, delimiter=',', field_names=list(d.keys()))
+            csvwriter.writerow(d)
+
+
+# TODO: CREATE A MULTIPROCESSING POOL OBJECT WITH 60 WORKERS:
+pool = Pool(60)
+
+# -------------------------------------------------------------------------------- #
+# OLD CODE:
+# -------------------------------------------------------------------------------- #
 
 if __name__ == "__main__":
     # program start:
     start = time.time()
 
-    # Open csv file and get list of all the url links
-    with open(csv_filename, 'r') as f:
-        csv_reader = csv.reader(f)
-        link_list = csv_parser(csv_reader, 'link')
+    # STEP: Use the get_links function to retrieve link_list from csv
+    csv_filename = './meetings.csv'
+    link_list = get_links(csv_filename)
 
-    # Now use the scraper function to scrape each link in that list
-    # and store the data in the d variable for dict
-    d = meeting_data_scraper(link_list)
-    dict_csv_writer(d)
+    # STEP: Use the pool.map method to fetch soup data from each link in link_list
+    soup_data = pool.map(fetch_soup_data, link_list)
+
+    # STEP: Cread a ThreadPoolExecutor with context and execute the functions used
+    # to extract data from the soup_data
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        address_data = executor.submit(pool.map(get_address_data, soup_data))
+        detail_data = executor.submit(pool.map(get_table_data, soup_data))
+
     # Open CSV file to append data to:
     # with open('meetings.csv', 'w') as f:
     #     csv_writer = csv.DictWriter(f, field_names=list(d.keys()))

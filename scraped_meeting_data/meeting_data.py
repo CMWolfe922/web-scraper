@@ -4,7 +4,6 @@ import requests
 from bs4 import BeautifulSoup as bs
 import pandas as pd
 import time
-import lxml
 from concurrent.futures import ThreadPoolExecutor
 from multiprocessing.pool import Pool
 

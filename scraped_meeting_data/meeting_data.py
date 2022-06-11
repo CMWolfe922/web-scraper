@@ -8,14 +8,32 @@ import lxml
 from concurrent.futures import ThreadPoolExecutor
 from multiprocessing.pool import Pool
 
-# TODO: CREATE FUNCTION THAT EXTRACTS LINKS FROM CSV AND RETURNS LIST:
+# TODO: CREATE FUNCTION THAT EXTRACTS COLUMN DATA FROM CSV AND RETURNS A LIST:
 
 
-def get_links(csv_filename):
+def create_list_from_column_data(csv_filename, column):
+    """
+    :description: Create a list from a CSV column's data. To do this I will use the with open()
+    context manager and open the csv file that was passed to this function as an argument. This
+    function also uses another function 'csv_parser'. csv_parser - is a function that
+    :param csv_filename: This is the name of the CSV file containing the column data I want to extract
+    to create a list.
+    :param column: This is the column name or number to extract data from in the CSV file.
+
+    :return: A list of strings/integers/float/datetypes from a CSV file.
+    """
+    # now create an empty list to append data to:
+    data_list = []
     with open(csv_filename, 'r') as f:
         csv_reader = csv.reader(f)
-        link_list = csv_parser(csv_reader, 'link')
-    return link_list
+        _column = next(csv_reader)
+        columnIndex = _column.index(column)
+        # loop through CSV file and append to address_list
+        for line in csv_reader:
+            all_data = line[columnIndex]
+            data_list.append(all_data)
+    return data_list
+
 
 # TODO: CREATE FUNCTION THAT WILL GET THE PAGE CONTENTS AND CREATE SOUP OBJ:
 
@@ -149,13 +167,10 @@ def convert_row_data_to_csv(row_data):
                 csvfile, delimiter=',', field_names=list(d.keys()))
             csvwriter.writerow(d)
 
-
-# TODO: CREATE A MULTIPROCESSING POOL OBJECT WITH 60 WORKERS:
-pool = Pool(60)
-
 # -------------------------------------------------------------------------------- #
 # OLD CODE:
 # -------------------------------------------------------------------------------- #
+
 
 if __name__ == "__main__":
     # program start:

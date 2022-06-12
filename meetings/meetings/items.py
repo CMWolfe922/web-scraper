@@ -20,12 +20,14 @@ class Meetings(scrapy.Item):
     name = scrapy.Field()
     address = scrapy.Field()
     city = scrapy.Field()
-    cityStateZip = scrapy.Field()
-    locationName = scrapy.Field()
-    time = scrapy.Field()
-    days = scrapy.Field()
-    type = scrapy.Field()
-    rules = scrapy.Field()
+    # cityStateZip = scrapy.Field()
+    # locationName = scrapy.Field()
+    # meeting_info = scrapy.Field()
+    # I don't think I need the same exact xpath for all these
+    # items because each one just returns the same thing
+    # days = scrapy.Field()
+    # type = scrapy.Field()
+    # rules = scrapy.Field()
     url = scrapy.Field()
 
 

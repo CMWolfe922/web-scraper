@@ -33,18 +33,18 @@ class AaSpider(CrawlSpider):
     def parse_info(self, response):
         # creating a logger:
         self.logger.info("A response from %s was received: ", response.url)
-        # --------------------------- Create an Meetngs object ---------------------------- #
+        # --------------------------- Create an Meetings object ---------------------------- #
         item = Meetings()
 
-        item['name'] = response.xpath("//div[@class='fui-card-body']//h4//a/text()").getall()
+        item['name'] = response.xpath("//div[@class='fui-card-body']//h4//a/text()").get()
         item['address'] = response.xpath("//div[@class='fui-card-body']//address[@class='weight-300']/text()").getall()
         item['city'] = response.xpath("//p[@class='weight-300']//a/text()").getall()
-        item['cityStateZip'] = response.xpath("//div[@class='fui-card-body']/h4/p/text()").getall()
-        item['locationName'] = response.xpath("//div[@class='fui-card-body']//p/text()").getall()
-        item['time'] = response.xpath("//table[@class='table fui-table']/td/text()").getall()
-        item['days'] = response.xpath("//table[@class='table fui-table']/td/text()").getall()
-        item['type'] = response.xpath("//table[@class='table fui-table']/td/text()").getall()
-        item['rules'] = response.xpath("//table[@class='table fui-table']/td/text()").getall()
+        # item['cityStateZip'] = response.xpath("//div[@class='fui-card-body']/h4/p/text()").getall()
+        # item['locationName'] = response.xpath("//div[@class='fui-card-body']//p/text()").getall()
+        # item['meeting_info'] = response.xpath("//table[@class='table fui-table']/td/text()").getall()
+        # item['days'] = response.xpath("//table[@class='table fui-table']/td/text()").getall()
+        # item['type'] = response.xpath("//table[@class='table fui-table']/td/text()").getall()
+        # item['rules'] = response.xpath("//table[@class='table fui-table']/td/text()").getall()
 
         # get each items url
         item['url'] = response.url
@@ -53,7 +53,7 @@ class AaSpider(CrawlSpider):
     # def parse_info(self, response):
     #     # creating a logger:
     #     self.logger.info("A response from %s was received: ", response.url)
-    #         # --------------------------- Create an Meetngs object ---------------------------- #
+    #         # --------------------------- Create an Meetings object ---------------------------- #
     #     item = Meetings()
     #     item['name'] = []
     #     item['name'] = response.xpath("//div[@class='fui-card-body']//h4//a/text()").get()

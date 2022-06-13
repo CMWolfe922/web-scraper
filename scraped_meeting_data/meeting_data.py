@@ -219,7 +219,7 @@ link_list = create_list_from_column_data(csv_filename, 'link')
 # chunk the links into bunches of 10,000
 ####################################################################################
 link_list1 = link_list[:10000]
-link_list2 = link_list[10000:20000]
+link_list2 = link_list[17754:20000]
 link_list3 = link_list[20000:30000]
 link_list4 = link_list[30000:]
 ####################################################################################

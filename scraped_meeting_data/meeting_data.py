@@ -219,7 +219,7 @@ link_list = create_list_from_column_data(csv_filename, 'link')
 # chunk the links into bunches of 10,000
 ####################################################################################
 link_list1 = link_list[:10000]
-link_list2 = link_list[17754:20000]
+link_list2 = link_list[19500:20000]
 link_list3 = link_list[20000:30000]
 link_list4 = link_list[30000:]
 ####################################################################################
@@ -273,8 +273,8 @@ if __name__ == '__main__':
                'zip_code', 'day', 'time', 'info']
     try:
         count = 0
-        # Scrape Link List # 2:
-        for link in link_list2:
+        # Scrape Link List # 3:
+        for link in link_list3:
             soup = fetch_soup_data(link)
             soup_data.append(soup)
             logger.info(

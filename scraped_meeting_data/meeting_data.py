@@ -220,9 +220,9 @@ link_list = create_list_from_column_data(csv_filename, 'link')
 # chunk the links into bunches of 10,000
 ####################################################################################
 link_list1 = link_list[:10000]
-link_list2 = link_list[19500:20000]
-link_list3 = link_list[29500:30000]
-link_list4 = link_list[30000:]
+link_list2 = link_list[10000:20000]
+link_list3 = link_list[20000:30000]
+link_list4 = link_list[33500:]
 ####################################################################################
 # Single Soup Scraper for
 ####################################################################################
@@ -282,14 +282,14 @@ if __name__ == '__main__':
             logger.info(
                 "[+] {} scraped successfully: Link number {}", link, count)
             count += 1
-            if count % 500 == 0:
+            if count % 8 == 0:
                 time.sleep(5)
-                # Every 500 links, write the row data to the new CSV file
+                # Every 8 links, write the row data to the new CSV file
                 for soup in soup_data:
                     row = single_soup_scraper(soup)
                     row_data.append(row)
-                    # check that row_data has 500 items:
-                    if len(row_data) == 500:
+                    # check that row_data has 8 items:
+                    if len(row_data) == 8:
                         # after each soup item is parsed and the results appended to row_data, append row data to csv
                         csv_writer(row_data, new_csv_filename, headers)
                         # Then clear both soup and row data lists
@@ -297,7 +297,7 @@ if __name__ == '__main__':
                         row_data.clear()
                         # log the success of the script
                         logger.info(
-                            "[+] Count is divisible by 500:{} | Writing ROW_DATA to [{}] | soup_data and row_data cleared!", count, new_csv_filename)
+                            "[+] Count is divisible by 8:{} | Writing ROW_DATA to [{}] | soup_data and row_data cleared!", count, new_csv_filename)
         end = time.time()
         finish = (end - start)
         program_timer = humanize.naturaltime(finish)

@@ -221,7 +221,7 @@ link_list = create_list_from_column_data(csv_filename, 'link')
 ####################################################################################
 link_list1 = link_list[:10000]
 link_list2 = link_list[19500:20000]
-link_list3 = link_list[23500:30000]
+link_list3 = link_list[29500:30000]
 link_list4 = link_list[30000:]
 ####################################################################################
 # Single Soup Scraper for
@@ -276,20 +276,20 @@ if __name__ == '__main__':
     try:
         count = 0
         # Scrape Link List # 3:
-        for link in link_list3:
+        for link in link_list4:
             soup = fetch_soup_data(link)
             soup_data.append(soup)
             logger.info(
                 "[+] {} scraped successfully: Link number {}", link, count)
             count += 1
-            if count % 1000 == 0:
+            if count % 500 == 0:
                 time.sleep(5)
-                # Every 1000 links, write the row data to the new CSV file
+                # Every 500 links, write the row data to the new CSV file
                 for soup in soup_data:
                     row = single_soup_scraper(soup)
                     row_data.append(row)
-                    # check that row_data has 1000 items:
-                    if len(row_data) == 1000:
+                    # check that row_data has 500 items:
+                    if len(row_data) == 500:
                         # after each soup item is parsed and the results appended to row_data, append row data to csv
                         csv_writer(row_data, new_csv_filename, headers)
                         # Then clear both soup and row data lists
@@ -297,11 +297,11 @@ if __name__ == '__main__':
                         row_data.clear()
                         # log the success of the script
                         logger.info(
-                            "[+] Count is divisible by 1000:{} | Writing ROW_DATA to [{}] | soup_data and row_data cleared!", count, new_csv_filename)
+                            "[+] Count is divisible by 500:{} | Writing ROW_DATA to [{}] | soup_data and row_data cleared!", count, new_csv_filename)
         end = time.time()
         finish = (end - start)
         program_timer = humanize.naturaltime(finish)
         logger.info(
-            "<<<<<<<<<<<<<<< LINK_LIST3 SUCCESS: PROGRAM FINISHED IN {} >>>>>>>>>>>>>>>>", program_timer)
+            "<<<<<<<<<<<<<<< LINK_LIST4 SUCCESS: PROGRAM STARTED {} >>>>>>>>>>>>>>>>", program_timer)
     except IndexError as e:
         logger.error("{}: List Exhausted. No more links to scrape.", e)

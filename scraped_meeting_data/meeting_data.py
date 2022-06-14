@@ -213,7 +213,7 @@ def csv_writer(row_data, csv_filename, headers=None):
 
 # whole list of links
 link_list = create_list_from_column_data(csv_filename, 'link')
-edited_list = link_list[3500:]
+edited_list = link_list[2000:]
 ####################################################################################
 # chunk the links into bunches of 10,000
 ####################################################################################

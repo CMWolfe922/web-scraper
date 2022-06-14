@@ -6,7 +6,7 @@ import itertools as it
 from loguru import logger
 import time
 import humanize
-
+import os.path
 # Move the CSV file and the logger
 # this is where any files or directories/path variables go:
 csv_filename = './meetings.csv'
@@ -164,13 +164,13 @@ def row_parser(item0, item1):
     I will need to join the list items to create one string with a | seperating each item so I can
     split the string when retrieving the data.
     """
-    row = {}
+    row = []
     try:
-        row['name'] = item0['name']
-        row['address'] = item0['address']
-        row['city'] = item0['city']
-        row['state'] = item0['state']
-        row['zip_code'] = ''
+        row.append(item0['name'])
+        row.append(item0['address'])
+        row.append(item0['city'])
+        row.append(item0['state'])
+        row.append('00000')
         logger.info("[+] Row Data Parsed")
     except Exception as e:
         logger.error("[-] Row Data Raised Exception: {}", e)
@@ -180,10 +180,12 @@ def row_parser(item0, item1):
         row['city'] = 'city'
         row['state'] = 'state'
 
-    # now add item1 to the row data
-    row['day'] = ' | '.join(item1['day'])
-    row['time'] = ' | '.join(item1['time'])
-    row['info'] = ' | '.join(item1['info'])
+    try:
+        row.append('|'.join(item1['day']))
+        row.append('|'.join(item1['time']))
+        row.append('|'.join(item1['info']))
+    except Exception as e:
+        logger.error("[-] Row Data Raised Exception: {}", e)
 
     # now return the row data dictionary
 
@@ -198,15 +200,11 @@ headers = ["name", 'address', 'city', 'state',
 def csv_writer(row_data, csv_filename, headers=None):
     with open(csv_filename, 'a') as f:
         if headers is not None:
-            writer = csv.DictWriter(f, fieldnames=headers, delimiter='|')
-            # writer.writeheader(headers)
+            writer = csv.writer(f, delimiter='|')
             for row in row_data:
                 writer.writerow(row)
         else:
-            # fieldnames = [k for k in row_data.keys()]
-            # writer = csv.DictWriter(f, fieldnames=fieldnames, delimiter='|')
-            # writer.writeheader(fieldnames)
-            writer = csv.DictWriter(f, fieldnames=headers, delimiter='|')
+            writer = csv.writer(f, delimiter='|')
             for row in row_data:
                 writer.writerow(row)
 
@@ -215,14 +213,16 @@ def csv_writer(row_data, csv_filename, headers=None):
 
 # whole list of links
 link_list = create_list_from_column_data(csv_filename, 'link')
-
+edited_list = link_list[1000:]
 ####################################################################################
 # chunk the links into bunches of 10,000
 ####################################################################################
 link_list1 = link_list[:10000]
 link_list2 = link_list[10000:20000]
 link_list3 = link_list[20000:30000]
-link_list4 = link_list[33500:]
+link_list4 = link_list[30000:]
+# Test link list
+link_list_test = link_list[:1000]
 ####################################################################################
 # Single Soup Scraper for
 ####################################################################################
@@ -275,33 +275,48 @@ if __name__ == '__main__':
                'zip_code', 'day', 'time', 'info']
     try:
         count = 0
-        # Scrape Link List # 3:
-        for link in link_list4:
+        # Scrape Link List # 1:
+        for link in edited_list:
             soup = fetch_soup_data(link)
             soup_data.append(soup)
             logger.info(
                 "[+] {} scraped successfully: Link number {}", link, count)
             count += 1
-            if count % 8 == 0:
+            if count % 500 == 0:
                 time.sleep(5)
-                # Every 8 links, write the row data to the new CSV file
+                # Every 500 links, write the row data to the new CSV file
                 for soup in soup_data:
                     row = single_soup_scraper(soup)
                     row_data.append(row)
-                    # check that row_data has 8 items:
-                    if len(row_data) == 8:
-                        # after each soup item is parsed and the results appended to row_data, append row data to csv
-                        csv_writer(row_data, new_csv_filename, headers)
-                        # Then clear both soup and row data lists
-                        soup_data.clear()
-                        row_data.clear()
-                        # log the success of the script
-                        logger.info(
-                            "[+] Count is divisible by 8:{} | Writing ROW_DATA to [{}] | soup_data and row_data cleared!", count, new_csv_filename)
+                    # check that row_data has 500 items:
+                    if len(row_data) == 500:
+                        try:
+                            if not os.path.exists(new_csv_file):
+                                df = pd.DataFrame(row_data, columns=headers)
+                                # after each soup item is parsed and the results appended to row_data, append row data to csv
+                                # csv_writer(row_data, new_csv_filename, headers)
+                                df.to_csv(new_csv_filename, sep='|',
+                                          mode='a', index=False)
+                                # Then clear both soup and row data lists
+                                soup_data.clear()
+                                row_data.clear()
+                                # log the success of the script
+                                logger.info(
+                                    "[+] Count is divisible by 500:{} | Writing ROW_DATA to [{}] | soup_data and row_data cleared!", count, new_csv_filename)
+                            else:
+                                df = pd.DataFrame(row_data)
+                                df.to_csv(new_csv_filename, sep='|',
+                                          mode='a', header=False, index=False)
+                                soup_data.clear()
+                                row_data.clear()
+                                logger.info(
+                                    "[+] Count divisible by 500:{} | Row Data wrote to: {} | soup_data and row_data cleared!", count, new_csv_filename)
+                        except TypeError as te:
+                            logger.error("TypeError Raised: {}", te)
         end = time.time()
         finish = (end - start)
         program_timer = humanize.naturaltime(finish)
         logger.info(
-            "<<<<<<<<<<<<<<< LINK_LIST4 SUCCESS: PROGRAM STARTED {} >>>>>>>>>>>>>>>>", program_timer)
+            "<<<<<<<<<<<<<<< test_link_list: SUCCESS: PROGRAM STARTED {} >>>>>>>>>>>>>>>>", program_timer)
     except IndexError as e:
         logger.error("{}: List Exhausted. No more links to scrape.", e)

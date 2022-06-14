@@ -304,7 +304,7 @@ if __name__ == '__main__':
                                 logger.info(
                                     "[+] Count is divisible by 500:{} | Writing ROW_DATA to [{}] | soup_data and row_data cleared!", count, new_csv_filename)
                             else:
-                                df = pd.DataFrame(row_data)
+                                df = pd.DataFrame(row_data, columns=headers)
                                 df.to_csv(new_csv_filename, sep='|',
                                           mode='a', index=False)
                                 soup_data.clear()

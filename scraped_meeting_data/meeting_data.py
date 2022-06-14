@@ -213,7 +213,7 @@ def csv_writer(row_data, csv_filename, headers=None):
 
 # whole list of links
 link_list = create_list_from_column_data(csv_filename, 'link')
-edited_list = link_list[1000:]
+edited_list = link_list[3500:]
 ####################################################################################
 # chunk the links into bunches of 10,000
 ####################################################################################
@@ -276,7 +276,7 @@ if __name__ == '__main__':
     try:
         count = 0
         # Scrape Link List # 1:
-        for link in link_list:
+        for link in edited_list:
             soup = fetch_soup_data(link)
             soup_data.append(soup)
             logger.info(

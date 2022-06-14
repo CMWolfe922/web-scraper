@@ -306,7 +306,7 @@ if __name__ == '__main__':
                             else:
                                 df = pd.DataFrame(row_data)
                                 df.to_csv(new_csv_filename, sep='|',
-                                          mode='a', header=False, index=False)
+                                          mode='a', index=False)
                                 soup_data.clear()
                                 row_data.clear()
                                 logger.info(

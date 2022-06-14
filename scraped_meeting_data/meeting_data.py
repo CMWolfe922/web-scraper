@@ -276,7 +276,7 @@ if __name__ == '__main__':
     try:
         count = 0
         # Scrape Link List # 1:
-        for link in edited_list:
+        for link in link_list:
             soup = fetch_soup_data(link)
             soup_data.append(soup)
             logger.info(

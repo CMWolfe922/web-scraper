@@ -192,8 +192,8 @@ def row_parser(item0, item1):
 
 
 new_csv_file = './meeting_details.csv'
-headers = ["name", 'address', 'city', 'state',
-           'zip_code', 'day', 'time', 'info']
+# headers = ["name", 'address', 'city', 'state',
+#            'zip_code', 'day', 'time', 'info']
 
 
 def csv_writer(row_data, csv_filename, headers=None):
@@ -270,8 +270,8 @@ if __name__ == '__main__':
     row_data = []
     soup_data = []
     # The headers for the csv_file
-    headers = ["name", 'address', 'city', 'state',
-               'zip_code', 'day', 'time', 'info']
+    # headers = ["name", 'address', 'city', 'state',
+    #            'zip_code', 'day', 'time', 'info']
     try:
         count = 0
         # Scrape Link List # 1:
@@ -281,35 +281,35 @@ if __name__ == '__main__':
             logger.info(
                 "[+] {} scraped successfully: Link number {}", link, count)
             count += 1
-            if count % 500 == 0:
+            if count % 100 == 0:
                 time.sleep(5)
-                # Every 500 links, write the row data to the new CSV file
+                # Every 100 links, write the row data to the new CSV file
                 for soup in soup_data:
                     row = single_soup_scraper(soup)
                     row_data.append(row)
-                    # check that row_data has 500 items:
-                    if len(row_data) == 500:
+                    # check that row_data has 100 items:
+                    if len(row_data) == 100:
                         try:
                             if not os.path.exists(new_csv_file):
-                                df = pd.DataFrame(row_data, columns=headers)
+                                df = pd.DataFrame.from_(row_data)
                                 # after each soup item is parsed and the results appended to row_data, append row data to csv
                                 # csv_writer(row_data, new_csv_filename, headers)
                                 df.to_csv(new_csv_filename, sep='|',
-                                          mode='a', index=False)
+                                          mode='a')
                                 # Then clear both soup and row data lists
                                 soup_data.clear()
                                 row_data.clear()
                                 # log the success of the script
                                 logger.info(
-                                    "[+] Count is divisible by 500:{} | Writing ROW_DATA to [{}] | soup_data and row_data cleared!", count, new_csv_filename)
+                                    "[+] Count is divisible by 100:{} | Writing ROW_DATA to [{}] | soup_data and row_data cleared!", count, new_csv_filename)
                             else:
-                                df = pd.DataFrame(row_data, columns=headers)
+                                df = pd.DataFrame(row_data)
                                 df.to_csv(new_csv_filename, sep='|',
-                                          mode='a', index=False)
+                                          mode='a')
                                 soup_data.clear()
                                 row_data.clear()
                                 logger.info(
-                                    "[+] Count divisible by 500:{} | Row Data wrote to: {} | soup_data and row_data cleared!", count, new_csv_filename)
+                                    "[+] Count divisible by 100:{} | Row Data wrote to: {} | soup_data and row_data cleared!", count, new_csv_filename)
                         except TypeError as te:
                             logger.error("TypeError Raised: {}", te)
         end = time.time()

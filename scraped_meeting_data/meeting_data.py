@@ -164,26 +164,25 @@ def row_parser(item0, item1):
     I will need to join the list items to create one string with a | seperating each item so I can
     split the string when retrieving the data.
     """
-    row = []
+    row = {}
     try:
-        row.append(item0['name'])
-        row.append(item0['address'])
-        row.append(item0['city'])
-        row.append(item0['state'])
-        row.append('00000')
+        row['name']=item0['name']
+        row['address']=item0['address']
+        row['city']=item0['city']
+        row['state']=item0['state']
+        row['zip_code']='00000'
         logger.info("[+] Row Data Parsed")
     except Exception as e:
         logger.error("[-] Row Data Raised Exception: {}", e)
-        print(e)
         row['name'] = 'name'
         row['address'] = 'address'
         row['city'] = 'city'
         row['state'] = 'state'
 
     try:
-        row.append('|'.join(item1['day']))
-        row.append('|'.join(item1['time']))
-        row.append('|'.join(item1['info']))
+        row['day']='|'.join(item1['day'])
+        row['time']='|'.join(item1['time'])
+        row['info']='|'.join(item1['info'])
     except Exception as e:
         logger.error("[-] Row Data Raised Exception: {}", e)
 
@@ -222,7 +221,7 @@ link_list2 = link_list[10000:20000]
 link_list3 = link_list[20000:30000]
 link_list4 = link_list[30000:]
 # Test link list
-link_list_test = link_list[:1000]
+link_list_test = link_list[:100]
 ####################################################################################
 # Single Soup Scraper for
 ####################################################################################

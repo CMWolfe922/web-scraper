@@ -53,16 +53,25 @@ if __name__ == '__main__':
     rotation = "10 MB"
     logger.add(log_file_path, rotation=rotation, level="INFO",
                format="[<green>{time: MMM D YYYY HH:mm:ss:SSSS}</>] | <level>{message}</>", backtrace=True, diagnose=True)
-
+    name_list = create_list_from_column_data(csv_file, 'name')
     address_list = create_list_from_column_data(csv_file, 'address')
-    q = deque(address_list)
+    nq = deque(name_list)
+    aq = deque(address_list)
     count = 0
     try:
-        while q:
-            address = q.popleft()
-            cleaned_address = extract_clean_address(address)
-            count += 1
-            logger.info("[+] {} at index {} cleaned | Cleaned Address: {}", address, count, cleaned_address)
+        while aq:
+            try:
+                address = aq.popleft()
+                name = nq.popleft()
+                cleaned_address = extract_clean_address(address)
+                logger.info("[+] {} address cleaned: Index [{}] - [{}]", name,  count, cleaned_address)
+                count += 1
+
+            except Exception as e:
+                address = aq.popleft()
+                name = nq.popleft()
+                logger.error("[-] {}'s address: [{}] NOT CLEANED | Index: [{}] ", name, address, count)
+                count += 1
 
         end = time.time()
         timer = (end - start) / 60

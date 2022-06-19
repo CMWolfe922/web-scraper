@@ -9,6 +9,8 @@ charset-normalizer==2.0.12
 constantly==15.1.0
 cryptography==37.0.2
 cssselect==1.1.0
+geographiclib==1.52
+geopy==2.2.0
 greenlet==1.1.2
 h11==0.13.0
 h2==3.2.0

@@ -173,7 +173,7 @@ def parse_dicts(item0, item1):
             row['address'].append(item0['address'])
             row['city'].append(item0['city'])
             row['state'].append(item0['state'])
-            row['zip_code'].append('00000')
+            row['zip_code'].append(item0['zip_code'])
         except Exception as e:
             logger.error("[-] Row Data Raised Exception: {}", e)
             print(e)

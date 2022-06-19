@@ -2,7 +2,7 @@ import csv
 import requests
 from bs4 import BeautifulSoup as bs
 import pandas as pd
-import itertools as it
+# import itertools as it
 from loguru import logger
 import time
 import humanize
@@ -11,12 +11,12 @@ import humanize
 csv_filename = './meetings.csv'
 
 
-def create_list_from_column_data(csv_filename, column):
+def create_list_from_column_data(csv_file, column):
     """
     :description: Create a list from a CSV column's data. To do this I will use the with open()
     context manager and open the csv file that was passed to this function as an argument.
     ----------------------------------------------------------------------------------------------------
-    :param csv_filename:-> This is the name of the CSV file containing the column data I want to extract
+    :param csv_file:-> This is the name of the CSV file containing the column data I want to extract
     to create a list.
     :param column:-> This is the column name or number to extract data from in the CSV file.
     ----------------------------------------------------------------------------------------------------
@@ -24,13 +24,13 @@ def create_list_from_column_data(csv_filename, column):
     """
     # now create an empty list to append data to:
     data_list = []
-    with open(csv_filename, 'r') as f:
+    with open(csv_file, 'r') as f:
         csv_reader = csv.reader(f)
         _column = next(csv_reader)
-        columnIndex = _column.index(column)
+        column_index = _column.index(column)
         # loop through CSV file and append to address_list
         for line in csv_reader:
-            all_data = line[columnIndex]
+            all_data = line[column_index]
             data_list.append(all_data)
     return data_list
 
@@ -68,8 +68,7 @@ def get_address_data(soup):
         address_tag = soup.address
         address = address_tag.contents[1]
 
-        meeting_name = soup.find(
-            'div', class_='fui-card-body').find(class_='weight-300')
+        meeting_name = soup.find('div', class_='fui-card-body').find(class_='weight-300')
         name = meeting_name.contents[1]
 
         city_tag = meeting_name.find_next('a')
@@ -77,8 +76,12 @@ def get_address_data(soup):
 
         state_tag = city_tag.find_next('a')
         state = state_tag.contents[0]
+
+        zip_tag = state_tag.find_next('a')
+        zip_code = zip_tag.contents[0]
+
         logger.info("[+] Address data retrieved")
-        return {'name': name, 'address': address, 'city': city, 'state': state}
+        return {'name': name, 'address': address, 'city': city, 'state': state, 'zip_code': zip_code}
 
     except IndexError as ie:
         logger.error("[-] UnboundError occured {} ", ie)
@@ -162,7 +165,7 @@ def parse_dicts(item0, item1):
     I will need to join the list items to create one string with a | seperating each item so I can 
     split the string when retrieving the data.
     """
-    row = {'name':[], 'address':[], 'city':[], 'state':[], 'zip_code':[], 'day':[], 'time':[], 'info':[]}
+    row = {'name': [], 'address': [], 'city': [], 'state': [], 'zip_code': [], 'day': [], 'time': [], 'info': []}
     try:
 
         try:
@@ -272,12 +275,11 @@ def scrape(link_list):
                 # Every 1000 links, write the row data to the new CSV file
                 rows = soup_list_scraper(soup_data)
                 row_df = pd.DataFrame.from_dict(rows)
-                row_df.to_csv(new_csv_file, mode='a', sep="\t", index=False)
+                row_df.to_csv(new_csv_file, mode='a', sep="|", index=False)
                 soup_data.clear()
-                logger.info(
-                            "[+] Count is divisible by 1000:{} | Writing ROW_DATA to [csv_file] | soup_data and row_data cleared!", count)
+                logger.info("[+] Count is divisible by 1000:{} | Writing ROW_DATA to [csv_file] | soup_data and row_data cleared!", count)
 
-        print(dataframes)
+                print(row_df)
         logger.info("<<<<<<<<<<<<<<< SUCCESS >>>>>>>>>>>>>>>>")
     except IndexError as e:
         logger.error("{}: List Exhausted. No more links to scrape.", e)

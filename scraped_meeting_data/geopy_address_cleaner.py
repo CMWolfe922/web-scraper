@@ -62,7 +62,7 @@ if __name__ == '__main__':
             address = q.popleft()
             cleaned_address = extract_clean_address(address)
             count += 1
-            logger.info("[+] Address at index {} cleaned | Cleaned Address: {}", count, cleaned_address)
+            logger.info("[+] {} at index {} cleaned | Cleaned Address: {}", address, count, cleaned_address)
 
         end = time.time()
         timer = (end - start) / 60

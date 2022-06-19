@@ -1,18 +1,21 @@
 from geopy.geocoders import Nominatim
 import pandas as pd
 import csv
+from collections import deque
+from loguru import logger
+import time
 
 # csv file
-csv_file = './csv_files/meetings.csv'
+csv_file = './meetings.csv'
 
 
 # CLEAN RAW ADDRESS DATA FROM FIRST CSV FILE:
-def create_list_from_column_data(csv_filename, column):
+def create_list_from_column_data(csv_file, column):
     """
     :description: Create a list from a CSV column's data. To do this I will use the with open()
     context manager and open the csv file that was passed to this function as an argument.
     ----------------------------------------------------------------------------------------------------
-    :param csv_filename:-> This is the name of the CSV file containing the column data I want to extract
+    :param csv_file:-> This is the name of the CSV file containing the column data I want to extract
     to create a list.
     :param column:-> This is the column name or number to extract data from in the CSV file.
     ----------------------------------------------------------------------------------------------------
@@ -20,7 +23,7 @@ def create_list_from_column_data(csv_filename, column):
     """
     # now create an empty list to append data to:
     data_list = []
-    with open(csv_filename, 'r') as f:
+    with open(csv_file, 'r') as f:
         csv_reader = csv.reader(f)
         _column = next(csv_reader)
         column_index = _column.index(column)
@@ -44,8 +47,30 @@ def extract_clean_address(addresses):
 
 
 if __name__ == '__main__':
+    start = time.time()
+    # Build the log file:
+    log_file_path = './data/address_cleaner.log'
+    rotation = "10 MB"
+    logger.add(log_file_path, rotation=rotation, level="INFO",
+               format="[<green>{time: MMM D YYYY HH:mm:ss:SSSS}</>] | <level>{message}</>", backtrace=True, diagnose=True)
+
     address_list = create_list_from_column_data(csv_file, 'address')
-    print(address_list)
-    messy_addresses = pd.DataFrame(address_list)
-    messy_addresses['cleaned_addresses'] = messy_addresses.apply(lambda x: extract_clean_address(x[0]), axis=1)
-    print(messy_addresses['cleaned_addresses'])
+    q = deque(address_list)
+    count = 0
+    try:
+        while q:
+            address = q.popleft()
+            cleaned_address = extract_clean_address(address)
+            count += 1
+            logger.info("[+] Address at index {} cleaned | Cleaned Address: {}", count, cleaned_address)
+
+        end = time.time()
+        timer = (end - start) / 60
+        logger.info("Program Completed in {} seconds", timer)
+    except StopIteration as si:
+        logger.error("[-] Queue has been exhausted")
+    except Exception as e:
+        logger.error("Exception Raised: {} at index {}", e, count)
+    # messy_addresses = pd.DataFrame(address_list)
+    # messy_addresses['cleaned_addresses'] = messy_addresses.apply(lambda x: extract_clean_address(x[0]), axis=1)
+    # print(messy_addresses['cleaned_addresses'])

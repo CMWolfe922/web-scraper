@@ -9,7 +9,7 @@ import time
 csv_file = './meetings.csv'
 
 
-# CLEAN RAW ADDRESS DATA FROM FIRST CSV FILE:
+# Function to access csv file data:
 def create_list_from_column_data(csv_file, column):
     """
     :description: Create a list from a CSV column's data. To do this I will use the with open()
@@ -34,16 +34,12 @@ def create_list_from_column_data(csv_file, column):
     return data_list
 
 
+# Clean the address data from csv_file
 def extract_clean_address(addresses):
     # USE EMAIL FOR FREE MAPS API
     geolocator = Nominatim(user_agent="sobering")
-    try:
-        location = geolocator.geocode(addresses)
-        print(location.address)
-        return location.address
-    except Exception as e:
-        print(e)
-        return f"Exception Raised: {e}"
+    location = geolocator.geocode(addresses)
+    return location.address
 
 
 if __name__ == '__main__':
@@ -52,7 +48,8 @@ if __name__ == '__main__':
     log_file_path = './data/address_cleaner.log'
     rotation = "10 MB"
     logger.add(log_file_path, rotation=rotation, level="INFO",
-               format="[<green>{time: MMM D YYYY HH:mm:ss:SSSS}</>] | <level>{message}</>", backtrace=True, diagnose=True)
+               format="[<green>{time: MMM D YYYY HH:mm:ss:SSSS}</>] | <level>{message}</>", backtrace=True,
+               diagnose=True)
     name_list = create_list_from_column_data(csv_file, 'name')
     address_list = create_list_from_column_data(csv_file, 'address')
     nq = deque(name_list)
@@ -64,7 +61,7 @@ if __name__ == '__main__':
                 address = aq.popleft()
                 name = nq.popleft()
                 cleaned_address = extract_clean_address(address)
-                logger.info("[+] {} address cleaned: Index [{}] - [{}]", name,  count, cleaned_address)
+                logger.info("[+] {} address cleaned: Index [{}] - [{}]", name, count, cleaned_address)
                 count += 1
 
             except Exception as e:
@@ -75,7 +72,7 @@ if __name__ == '__main__':
 
         end = time.time()
         timer = (end - start) / 60
-        logger.info("Program Completed in {} seconds", timer)
+        logger.info("<<<<<<<<<< Program Completed in {} seconds >>>>>>>>>>", timer)
     except StopIteration as si:
         logger.error("[-] Queue has been exhausted")
     except Exception as e:

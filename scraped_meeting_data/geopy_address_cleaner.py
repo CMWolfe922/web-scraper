@@ -48,7 +48,7 @@ if __name__ == '__main__':
     log_file_path = './data/address_cleaner.log'
     rotation = "10 MB"
     logger.add(log_file_path, rotation=rotation, level="INFO",
-               format="[<green>{time: MMM D YYYY HH:mm:ss:SSSS}</>] | <level>{message}</>", backtrace=True,
+               format="[<green>{time: MMM D YYYY HH:mm:ss.SS}</>] | {file} took {elapsed} to execute | <level>{message}</>", backtrace=True,
                diagnose=True)
     name_list = create_list_from_column_data(csv_file, 'name')
     address_list = create_list_from_column_data(csv_file, 'address')
@@ -61,22 +61,22 @@ if __name__ == '__main__':
                 address = aq.popleft()
                 name = nq.popleft()
                 cleaned_address = extract_clean_address(address)
-                logger.info("[+] {} address cleaned: Index [{}] - [{}]", name, count, cleaned_address)
+                logger.info("<blue>[+] {} address cleaned: [{}]</> | <yellow>Index: [{}]</>", name, cleaned_address, count)
                 count += 1
 
             except Exception as e:
                 address = aq.popleft()
                 name = nq.popleft()
-                logger.error("[-] {}'s address: [{}] NOT CLEANED | Index: [{}] ", name, address, count)
+                logger.error("<red>[-] {}'s address: [{}] NOT CLEANED</> | <yellow>Index: [{}]</>", name, address, count)
                 count += 1
 
         end = time.time()
         timer = (end - start) / 60
-        logger.info("<<<<<<<<<< Program Completed in {} seconds >>>>>>>>>>", timer)
+        logger.success("<<<<<<<<<< Program Completed in {} minutes >>>>>>>>>>", timer)
     except StopIteration as si:
-        logger.error("[-] Queue has been exhausted")
+        logger.error("<red>[-] Queue has been exhausted</>")
     except Exception as e:
-        logger.error("Exception Raised: {} at index {}", e, count)
+        logger.error("<red>Exception Raised: {}</> @ <yellow>Index: [{}]</>", e, count)
     # messy_addresses = pd.DataFrame(address_list)
     # messy_addresses['cleaned_addresses'] = messy_addresses.apply(lambda x: extract_clean_address(x[0]), axis=1)
     # print(messy_addresses['cleaned_addresses'])

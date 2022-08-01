@@ -36,6 +36,10 @@ def create_list_from_column_data(csv_filename, column):
     return data_list
 
 
+def get_csv_column_data(csv_name, column):
+    df = pd.read_csv(csv_name)
+    return df[column][1:]
+
 def fetch_soup_data(link):
     """
     Basic function that takes a link from link_list and accepts it as an argument,
@@ -78,27 +82,35 @@ def get_address_data(soup):
 
         state_tag = city_tag.find_next('a')
         state = state_tag.contents[0]
+
+        zip_tag = state_tag.find_next('a')
+        zip_code = zip_tag.contents[0]
+
         logger.info("[+] Address data retrieved")
-        return {'name': name, 'address': address, 'city': city, 'state': state}
+        return {'name': name, 'address': address, 'city': city, 'state': state, 'zip_code': zip_code}
 
     except IndexError as ie:
         logger.error("[-] UnboundError occured {} ", ie)
         try:
-            return {'name': name, 'address': address, 'city': city, 'state': 'state'}
+            return {'name': name, 'address': address, 'city': city, 'state': state, 'zip_code': '00000'}
         except UnboundLocalError as ule:
-            logger.error("[-] UnboundLocalError occured: {} ", ule)
+            logger.error("[-] UnboundLocalError occured: (zip_code not found) {} ", ule)
         try:
-            return {'name': name, 'address': address, 'city': 'city', 'state': state}
+            return {'name': name, 'address': address, 'city': city, 'state': 'state', 'zip_code': zip_code}
         except UnboundLocalError as ule:
-            logger.error("[-] UnboundError occured {} ", ule)
+            logger.error("[-] UnboundLocalError occured: (state not found) {} ", ule)
         try:
-            return {'name': name, 'address': 'address', 'city': city, 'state': state}
+            return {'name': name, 'address': address, 'city': 'city', 'state': state, 'zip_code': zip_code}
         except UnboundLocalError as ule:
-            logger.error("[-] UnboundError occured {} ", ule)
+            logger.error("[-] UnboundError occured: (city not found) {} ", ule)
         try:
-            return {'name': 'name', 'address': address, 'city': city, 'state': state}
+            return {'name': name, 'address': 'address', 'city': city, 'state': state, 'zip_code': zip_code}
         except UnboundLocalError as ule:
-            logger.error("[-] UnboundError occured {} ", ule)
+            logger.error("[-] UnboundError occured: (address not found) {} ", ule)
+        try:
+            return {'name': 'name', 'address': address, 'city': city, 'state': state, 'zip_code': zip_code}
+        except UnboundLocalError as ule:
+            logger.error("[-] UnboundError occured: (name not found) {} ", ule)
 
 
 # CREATE A FUNCTION THAT WILL EXTRACT ALL THE TABLE DATA FROM EACH LINK
@@ -170,7 +182,7 @@ def row_parser(item0, item1):
         row.append(item0['address'])
         row.append(item0['city'])
         row.append(item0['state'])
-        row.append('00000')
+        row.append(item0['zip_code'])
         logger.info("[+] Row Data Parsed")
     except Exception as e:
         logger.error("[-] Row Data Raised Exception: {}", e)
@@ -212,8 +224,7 @@ def csv_writer(row_data, csv_filename, headers=None):
 
 
 # whole list of links
-link_list = create_list_from_column_data(csv_filename, 'link')
-edited_list = link_list[2000:]
+link_list = get_csv_column_data(csv_filename, 'link')
 ####################################################################################
 # chunk the links into bunches of 10,000
 ####################################################################################
@@ -276,7 +287,7 @@ if __name__ == '__main__':
     try:
         count = 0
         # Scrape Link List # 1:
-        for link in edited_list:
+        for link in link_list2:
             soup = fetch_soup_data(link)
             soup_data.append(soup)
             logger.info(

@@ -14,13 +14,40 @@ FILE = os.path.join(PATH, FILE_NAME)
 # ====================================================== #
 # PROGRAM FUNCTIONS FOR EXTRACTING DATA:
 # ====================================================== #
-def get_csv_data(file):
+def sort_meeting_data(file):
 	data = pd.read_csv(file, sep="|")
-	address = data['address'].head(20)
-	city = data['city'].head(20)
-	print(address, city)
+	data.sort_values(by=['zip_code'], inplace=True)
+	return data
 
+def display_meeting_data(df, n:int):
+
+	name = df['name']
+	address = df['address']
+	city = df['city']
+	state = df['state']
+	zip_code = df['zip_code']
+	day = df['day']
+	time = df['time']
+	info = df['info']
+
+	print(name.head(n))
+	print(address.head(n))
+	print(city.head(n))
+	print(state.head(n))
+	print(zip_code.head(n))
+	print(day.head(n))
+	print(time.head(n))
+	print(info.head(n))
 
 
 if __name__ == '__main__':
-	get_csv_data(FILE)
+	df = sort_meeting_data(FILE)
+	# display_meeting_data(df, 20)
+	counter = 0 
+	for row in df.iterrows():
+		if counter == 100:
+			break
+		else:
+			print(row)
+			counter += 1
+

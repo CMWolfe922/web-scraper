@@ -55,8 +55,6 @@ def fetch_soup_data(link):
 
 # CREATE A FUNCTION THAT WILL EXTRACT ADDRESS DATA FROM EACH LINK IN
 # LINK LIST:
-
-
 def get_address_data(soup):
     """
     :description: Extracts the address data from a soup object that gets past to it in a
@@ -224,16 +222,15 @@ def csv_writer(row_data, csv_filename, headers=None):
 
 
 # whole list of links
-link_list = get_csv_column_data(csv_filename, 'link')
+links = get_csv_column_data(csv_filename, 'link')
 ####################################################################################
 # chunk the links into bunches of 10,000
 ####################################################################################
-link_list1 = link_list[:10000]
-link_list2 = link_list[10000:20000]
-link_list3 = link_list[20000:30000]
-link_list4 = link_list[30000:]
-# Test link list
-link_list_test = link_list[:1000]
+link_list1 = links[:10000]
+link_list2 = links[10000:20000]
+link_list3 = links[20000:30000]
+link_list4 = links[30000:]
+
 ####################################################################################
 # Single Soup Scraper for
 ####################################################################################
@@ -286,21 +283,22 @@ if __name__ == '__main__':
                'zip_code', 'day', 'time', 'info']
     try:
         count = 0
-        # Scrape Link List # 1:
-        for link in link_list2:
+        # soup_data = [fetch_soup_data(link) for link in links]
+        # Scrape LINKS
+        for link in links:
             soup = fetch_soup_data(link)
             soup_data.append(soup)
             logger.info(
                 "[+] {} scraped successfully: Link number {}", link, count)
             count += 1
-            if count % 500 == 0:
-                time.sleep(5)
+            if count % 250 == 0:
+                time.sleep(2)
                 # Every 500 links, write the row data to the new CSV file
                 for soup in soup_data:
                     row = single_soup_scraper(soup)
                     row_data.append(row)
                     # check that row_data has 500 items:
-                    if len(row_data) == 500:
+                    if len(row_data) == 250:
                         try:
                             if not os.path.exists(new_csv_file):
                                 df = pd.DataFrame(row_data, columns=headers)

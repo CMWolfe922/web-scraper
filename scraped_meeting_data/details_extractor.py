@@ -44,10 +44,12 @@ if __name__ == '__main__':
 	df = sort_meeting_data(FILE)
 	# display_meeting_data(df, 20)
 	counter = 0 
-	for row in df.iterrows():
-		if counter == 100:
-			break
-		else:
-			print(row)
-			counter += 1
+	z = [row for row in df['zip_code']]
+	zips = enumerate(z)
+	for i in zips:
+		print(i)
+
+
+
+
 

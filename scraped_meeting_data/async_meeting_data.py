@@ -36,6 +36,14 @@ def get_csv_column_data(csv_file, column):
     df = pd.read_csv(csv_file)
     return df[column][1:]
 
+def chunk_list(data_list:list, size:int=250):
+    """
+    :: break the link list up into chunks of 250 links each ::
+    """
+    chunked_list = [data_list[i:i + size] for i in range(0, len(data_list), size)]
+    chunked_list_size = len(chunked_list)
+    logger.info("[+] List was broken up into {} smaller lists.", chunked_list_size)
+    return chunked_list
 
 # ================================================================ #
 # Create async web scraping functions:
@@ -265,9 +273,19 @@ async def main(links:list):
 	except IndexError as e:
 		logger.error("{}: List Exhausted, no more links..", e)
 
+def split(data_list, chunk_size):
+	for i in range(0, len(data_list), chunk_size):
+		yield data_list[i:i + chunk_size]
+
 
 if __name__ == '__main__':
 	links = get_csv_column_data(CSV_FILE, 'link')
-	loop = asyncio.get_event_loop()
-	loop.run_until_complete(main(links[6750:]))
+	link_chunks = chunk_list(links)
+	chunked = list(split(links, chunk_size=250))
+	for link_list in chunked:
+		soup_data = map(fetch_soup, link_list)
+	for i in soup_data:
+		print(i)
+	# loop = asyncio.get_event_loop()
+	# loop.run_until_complete(main(links[6750:]))
 

@@ -55,8 +55,6 @@ def fetch_soup_data(link):
 
 # CREATE A FUNCTION THAT WILL EXTRACT ADDRESS DATA FROM EACH LINK IN
 # LINK LIST:
-
-
 def get_address_data(soup):
     """
     :description: Extracts the address data from a soup object that gets past to it in a
@@ -228,12 +226,20 @@ links = get_csv_column_data(csv_filename, 'link')
 ####################################################################################
 # chunk the links into bunches of 10,000
 ####################################################################################
+<<<<<<< HEAD
 # link_list1 = link_list[:10000]
 # link_list2 = link_list[10000:20000]
 # link_list3 = link_list[20000:30000]
 # link_list4 = link_list[30000:]
 # # Test link list
 # link_list_test = link_list[:1000]
+=======
+link_list1 = links[:10000]
+link_list2 = links[10000:20000]
+link_list3 = links[20000:30000]
+link_list4 = links[30000:]
+
+>>>>>>> c361c5f2608b87779f378585f6bd9e3908587ee7
 ####################################################################################
 # Single Soup Scraper for
 ####################################################################################
@@ -286,19 +292,34 @@ if __name__ == '__main__':
                'zip_code', 'day', 'time', 'info']
     try:
         count = 0
+<<<<<<< HEAD
         for link in links[3750:]:
+=======
+        # soup_data = [fetch_soup_data(link) for link in links]
+        # Scrape LINKS
+        for link in links:
+>>>>>>> c361c5f2608b87779f378585f6bd9e3908587ee7
             soup = fetch_soup_data(link)
             soup_data.append(soup)
             logger.info(
                 "[+] {} scraped successfully: Link number {}", link, count)
             count += 1
             if count % 250 == 0:
+<<<<<<< HEAD
                 time.sleep(5)
                 # Every 250 links, write the row data to the new CSV file
                 for soup in soup_data:
                     row = single_soup_scraper(soup)
                     row_data.append(row)
                     # check that row_data has 250 items:
+=======
+                time.sleep(2)
+                # Every 500 links, write the row data to the new CSV file
+                for soup in soup_data:
+                    row = single_soup_scraper(soup)
+                    row_data.append(row)
+                    # check that row_data has 500 items:
+>>>>>>> c361c5f2608b87779f378585f6bd9e3908587ee7
                     if len(row_data) == 250:
                         try:
                             if not os.path.exists(new_csv_file):

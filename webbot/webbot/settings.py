@@ -62,9 +62,10 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'webbot.pipelines.WebbotPipeline': 300,
-#}
+ITEM_PIPELINES = {
+    'webbot.pipelines.LinkedInPipeline': 300,
+}
+
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -86,3 +87,28 @@ ROBOTSTXT_OBEY = False
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+
+LINKEDIN_PASSWORD = "mzmfib112358!#"
+LINKEDIN_USERNAME = "cmwolfe.dev@gmail.com"
+
+GOOGLE_GEMINI_API_KEY = "AIzaSyCsEtcUJS6fwfKgBPyskX0cNvMEN4WgCX4"
+
+# REDDIT INFO
+# API KEY
+REDDIT_CLIENT_SECRET = "Bz48bbfbycZif6kH3UarB8dYW6Ireg"
+# APP NAME
+REDDIT_USER_AGENT = "testing"
+REDDIT_USERNAME = "Dry_Gas3311"
+REDDIT_REDIRECT_URI = "http://localhost:8080"
+REDDIT_CLIENT_ID = "RtwgbCMW3W0sFw"
+
+# MYSQL
+MYSQL_USERNAME = "root"
+MYSQL_PASSWORD = "root"
+MYSQL_HOST = "localhost"
+MYSQL_PORT = "3306"
+
+# MONGODB DATABASE
+MONGODB_DOCKER_CONNECTION = "mongodb://localhost:27017"
+MONGODB_DOCKER_DATABASE = "extracted"

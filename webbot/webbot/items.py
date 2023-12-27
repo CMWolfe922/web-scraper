@@ -19,3 +19,8 @@ class Articles(scrapy.Item):
     body = scrapy.Field()
     publishDate = scrapy.Field()
     lastUpdated = scrapy.Field()
+
+class LinkedinItem(scrapy.Item):
+    username = scrapy.Field()
+    post_url = scrapy.Field()
+    post_likes = scrapy.Field()

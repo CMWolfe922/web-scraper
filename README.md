@@ -195,3 +195,82 @@ if __name__ == "__main__":
 	driver.quit()Just about yeah
 
 ```
+
+===============================================================================
+## SETTING UP HEADLESS BROWESER FOR SELENIUM IN UBUNTU WSL2 
+===============================================================================
+##### 1.) INSTALL A HEADLESS BROWSER 
+> You can install Firefox or Chrome in headless mode. Headless mode allows you to run the browser without a GUI, which is perfect for server environments and automated scripts like those used in Selenium.
+
+- For Firefox:
+```bash
+sudo apt update
+sudo apt install firefox
+```
+
+- For Chrome:
+```bash
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt install ./google-chrome-stable_current_amd64.deb
+```
+
+##### 2.) INSTALL WEBDRIVER
+> You'll also need the appropriate WebDriver for your browser.
+
+- For Firefox (Geckodriver)
+```bash
+wget https://github.com/mozilla/geckodriver/releases/download/v0.29.0/geckodriver-v0.29.0-linux64.tar.gz
+tar -xvzf geckodriver-v0.29.0-linux64.tar.gz
+chmod +x geckodriver
+sudo mv geckodriver /usr/local/bin/
+```
+
+- For Chrome (Chromedriver)
+```bash
+wget https://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip
+unzip chromedriver_linux64.zip
+sudo mv chromedriver /usr/local/bin/
+sudo chmod +x /usr/local/bin/chromedriver
+```
+
+##### 3.) INSTALL SELENIUM
+> Ensure that selenium is installed in your Python environment:
+```bash
+pip install selenium
+```
+
+##### 4.) PYTHON SCRIPT EXAMPLE
+> Here's a basic Python script example using Selenium with a headless browser.
+```python
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
+
+# Set up headless Firefox
+options = FirefoxOptions()
+options.add_argument("--headless")
+driver = webdriver.Firefox(options=options)
+
+# Navigate and interact
+driver.get("http://example.com")
+print(driver.title)
+
+# Clean up
+driver.quit()
+```
+
+##### 5.) RUN YOUR SCRIPT
+> Execute your Python script in the WSL2 environment:
+
+```bash
+python3 your_script.py
+```
+
+###### Additional Notes:
+---
+- If you encounter issues with versions or dependencies, make sure to check for compatible versions of the browser, WebDriver, and Selenium.
+- Sometimes, running graphical applications in WSL2 might require additional configurations, especially regarding display servers (like X Server), but this is typically not necessary for headless mode.
+- Ensure that your WSL2 instance has internet access if your Selenium scripts interact with online resources.
+
+By following these steps, you should be able to run Selenium with a headless browser in a WSL2 Ubuntu environment.
+
+===============================================================================

@@ -1,12 +1,15 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 import time
 from bs4 import BeautifulSoup as bs
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
+
 LINKEDIN_USERNAME = os.getenv("LINKEDIN_USERNAME")
 LINKEDIN_PASSWORD = os.getenv("LINKEDIN_PASSWORD")
 
@@ -40,8 +43,12 @@ def login_to_linkedin(driver):
 
 if __name__ == "__main__":
 
-	# Which driver to use
-	driver = webdriver.Firefox()
+	# Set up headless Firefox
+	executable_firefox = "/usr/bin/firefox"
+	service = Service(executable_path=executable_firefox)
+	options = FirefoxOptions()
+	options.add_argument("--headless")
+	driver = webdriver.Firefox(service=service, options=options)
 
 	# login function
 	login_to_linkedin(driver)

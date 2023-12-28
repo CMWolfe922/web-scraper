@@ -1,20 +1,50 @@
 import scrapy
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
+from scrapy import settings
+from scrapy.http import FormRequest
 
 
 class LinkedinSpider(scrapy.Spider):
     name = 'linkedin'
-    allowed_domains = ['https://www.linkedin.com/home']
-    start_urls = ['https://www.linkedin.com/home/']
+    login_url = "https://www.linkedin.com/home"
+    start_urls = [login_url]
 
-    login_data = {'username': 'cmwolfe1123@gmail.com', 'password': ''}
-    
+    login_input_xpath = "//input[@id='session_key']",
+    login_password_input_xpath = "//input[@id='session_password']",
+    login_submit_button_xpath = "//button[@type='submit']",
+
     def parse(self, response):
-        # page components xpath for user input fields for logging into LinkedIn
-        login_username = "//input[@id='session_key']"
-        login_password = "//input[@id='session_password']"
-        login_submit_button = "//button[@type='submit']"
+        # Extract any additional form fields or tokens if needed
+        # csrf_token = response.css('input[name="csrf_token"]::attr(value)').get()
+
+        # Define your login credentials
+        username = self.settings.get('LINKEDIN_USERNAME')
+        password = self.settings.get('LINKEDIN_PASSWORD')
+
+        # Fill in the login form fields
+        yield FormRequest.from_response(
+            response,
+            formdata={
+                self.login_input_xpath: username,
+                self.login_password_input_xpath: password,
+                # 'csrf_token_field_name': csrf_token,  # Include if needed
+                # Add any other required form fields here
+            },
+            callback=self.after_login
+        )
+
+    def after_login(self, response):
+        # Check if the login was successful
+        if "Welcome, " in response.text:
+            self.logger.info("Login successful")
+            # You can continue with your scraping logic here
+            # For example, you can yield requests to other pages you want to scrape
+        else:
+            self.logger.error("Login failed")
+
+    def parse_feed(self, response):
+        # Extract data from the feed page and do something with it
         title = "//h1[@class='main-heading text-color-text-accent-2 babybear:pb-[24px]']"
         impressions = "//span[normalize-space()='410']"
         reposts = "button[id='ember1208'] span[aria-hidden='true']"
@@ -24,4 +54,5 @@ class LinkedinSpider(scrapy.Spider):
         post_image = "/html[1]/body[1]/div[5]/div[3]/div[1]/div[1]/div[2]/div[1]/div[1]/main[1]/div[4]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/article[1]/div[1]/div[1]/a[1]/div[1]/div[1]/img[1]"
         submissions = "/html/body/div[5]/div[3]/div/div/div[2]/div/div/main/div[4]/div/div[1]/div[2]/div/div/div/div/div/div/article/div/div[2]/div/a/div/div/div/div/span"
         post_comments = "/html[1]/body[1]/div[5]/div[3]/div[1]/div[1]/div[2]/div[1]/div[1]/main[1]/div[4]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[7]/div[1]/div[1]/div[1]/ul[1]/li[2]/button[1]/span[1]"
+
         pass

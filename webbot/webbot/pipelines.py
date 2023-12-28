@@ -5,13 +5,13 @@
 
 
 # useful for handling different item types with a single interface
+from scrapy.exporters import BaseItemExporter
 from itemadapter import ItemAdapter
 import json
-from scrapy import item
-# import MongoDB packages
 import pymongo
 import os
-
+from scrapy import item
+# import MongoDB packages
 
 
 
@@ -19,7 +19,7 @@ class WebbotPipeline:
     def process_item(self, item, spider):
         return item
 
-class LinkedInPipeline:
+class LinkedInPipeline(BaseItemExporter):
     collection = 'linkedin_items'
 
     def __init__(self, mongo_uri, mongo_db):

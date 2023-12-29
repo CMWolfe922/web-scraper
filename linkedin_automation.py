@@ -6,9 +6,10 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 import time
 from bs4 import BeautifulSoup as bs
 import os
-from dotenv import load_dotenv
+from loguru import logger
 
-load_dotenv()
+
+
 
 LINKEDIN_USERNAME = os.getenv("LINKEDIN_USERNAME")
 LINKEDIN_PASSWORD = os.getenv("LINKEDIN_PASSWORD")
@@ -42,24 +43,58 @@ def login_to_linkedin(driver):
 	submit_button.click()
 
 if __name__ == "__main__":
+    # setting up logging
+	PATH = "./tmp/"
+	FILE = __file__.split('/')[-1]
+	LOG_FILE = os.path.join(PATH, FILE)
 
-	# Set up headless Firefox
-	executable_firefox = "/usr/bin/firefox"
-	service = Service(executable_path=executable_firefox)
-	options = FirefoxOptions()
-	options.add_argument("--headless")
-	driver = webdriver.Firefox(service=service, options=options)
+	logger.add(LOG_FILE, format="{time:MM/DD/YYYY at HH:mm:ss} | {level} | {name} | {message}", diagnose=True, backtrace=True)
 
-	# login function
-	login_to_linkedin(driver)
+	# Check if the system is running on Windows or Linux
+	try:
 
-	# NOW I NEED TO GET DATA FROM THE LINKED IN PAGE:
-	# (I can use BeautifulSoup for this)
-	soup = driver.to_soup()
-	print(soup.parse_html())
+		if os.name == 'nt':
+			logger.info("Running on Windows")
 
-	# Get the message after the click
-	# text = text_box.text
-	time.sleep(3)
-	# Close the driver out
-	driver.quit()
+			# Set up headless Firefox
+			driver = webdriver.Firefox()
+
+			# login function
+			login_to_linkedin(driver)
+
+			# NOW I NEED TO GET DATA FROM THE LINKED IN PAGE:
+			# (I can use BeautifulSoup for this)
+			soup = driver.to_soup()
+			print(soup.parse_html())
+
+			# Get the message after the click
+			# text = text_box.text
+			time.sleep(3)
+			# Close the driver out
+			driver.quit()
+
+		elif os.name == 'posix':
+
+			logger.info("Running ona POSIX-compatiblesystem (Like Ubuntu)")
+			# Set up headless Firefox
+			executable_firefox = "/usr/bin/firefox"
+			service = Service(executable_path=executable_firefox)
+			options = FirefoxOptions()
+			options.add_argument("--headless")
+			driver = webdriver.Firefox(service=service, options=options)
+			# login function
+			login_to_linkedin(driver)
+
+			# NOW I NEED TO GET DATA FROM THE LINKED IN PAGE:
+			# (I can use BeautifulSoup for this)
+			soup = driver.to_soup()
+			print(soup.parse_html())
+
+			# Get the message after the click
+			# text = text_box.text
+			time.sleep(3)
+			# Close the driver out
+			driver.quit()
+
+	except Exception as e:
+		logger.error(e)

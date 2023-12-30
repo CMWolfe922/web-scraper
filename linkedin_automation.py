@@ -7,7 +7,9 @@ import time
 from bs4 import BeautifulSoup as bs
 import os
 from loguru import logger
+from dotenv import load_dotenv
 
+load_dotenv()
 
 
 
@@ -45,14 +47,24 @@ def login_to_linkedin(driver):
 if __name__ == "__main__":
     # setting up logging
 	PATH = "./tmp/"
-	FILE = __file__.split('/')[-1]
+	FILE = __file__.split('/')[-1] + ".log"
 	LOG_FILE = os.path.join(PATH, FILE)
 
 	logger.add(LOG_FILE, format="{time:MM/DD/YYYY at HH:mm:ss} | {level} | {name} | {message}", diagnose=True, backtrace=True)
 
 	# Check if the system is running on Windows or Linux
 	try:
-
+		# Extract data from the feed page and do something with it
+		title = "//h1[@class='main-heading text-color-text-accent-2 babybear:pb-[24px]']"
+		impressions = "//span[normalize-space()='410']"
+		reposts = "button[id='ember1208'] span[aria-hidden='true']"
+		post_title = "body > div:nth-child(65) > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > main:nth-child(2) > div:nth-child(4) > div:nth-child(2) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1) > span:nth-child(1) > span:nth-child(1) > span:nth-child(1) > span:nth-child(1)"
+		followers = "body > div:nth-child(65) > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > main:nth-child(2) > div:nth-child(4) > div:nth-child(2) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1) > span:nth-child(2) > span:nth-child(1)"
+		main_image = "/html[1]/body[1]/div[5]/div[3]/div[1]/div[1]/div[2]/div[1]/div[1]/main[1]/div[4]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/a[1]/span[1]/div[1]/div[1]/img[1]"
+		post_image = "/html[1]/body[1]/div[5]/div[3]/div[1]/div[1]/div[2]/div[1]/div[1]/main[1]/div[4]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/article[1]/div[1]/div[1]/a[1]/div[1]/div[1]/img[1]"
+		submissions = "/html/body/div[5]/div[3]/div/div/div[2]/div/div/main/div[4]/div/div[1]/div[2]/div/div/div/div/div/div/article/div/div[2]/div/a/div/div/div/div/span"
+		post_comments = "/html[1]/body[1]/div[5]/div[3]/div[1]/div[1]/div[2]/div[1]/div[1]/main[1]/div[4]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[7]/div[1]/div[1]/div[1]/ul[1]/li[2]/button[1]/span[1]"
+		
 		if os.name == 'nt':
 			logger.info("Running on Windows")
 
@@ -60,12 +72,24 @@ if __name__ == "__main__":
 			driver = webdriver.Firefox()
 
 			# login function
-			login_to_linkedin(driver)
+			url = login_to_linkedin(driver)
+
+			data = {
+			'title': driver.find_element(By.XPATH, title),
+			'impressions': driver.find_element(By.XPATH, impressions),
+			'reposts': driver.find_element(By.CSS_SELECTOR, reposts),
+			'post_title': driver.find_element(By.CSS_SELECTOR, post_title),
+			'followers': driver.find_element(By.CSS_SELECTOR, followers),
+			'main_image': driver.find_element(By.XPATH, main_image),
+			'post_image': driver.find_element(By.XPATH, post_image),
+			'submissions': driver.find_element(By.XPATH, submissions),
+			'post_comments': driver.find_element(By.XPATH, post_comments),
+			}
 
 			# NOW I NEED TO GET DATA FROM THE LINKED IN PAGE:
 			# (I can use BeautifulSoup for this)
-			soup = driver.to_soup()
-			print(soup.parse_html())
+			title = bs.get(data['title'])
+			print(title.text)
 
 			# Get the message after the click
 			# text = text_box.text
@@ -97,4 +121,4 @@ if __name__ == "__main__":
 			driver.quit()
 
 	except Exception as e:
-		logger.error(e)
+		logger.error(e.with_traceback())

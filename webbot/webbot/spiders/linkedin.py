@@ -40,19 +40,33 @@ class LinkedinSpider(scrapy.Spider):
             self.logger.info("Login successful")
             # You can continue with your scraping logic here
             # For example, you can yield requests to other pages you want to scrape
+            yield self.parse_feed(response)
+            
         else:
             self.logger.error("Login failed")
 
     def parse_feed(self, response):
         # Extract data from the feed page and do something with it
-        title = "//h1[@class='main-heading text-color-text-accent-2 babybear:pb-[24px]']"
-        impressions = "//span[normalize-space()='410']"
-        reposts = "button[id='ember1208'] span[aria-hidden='true']"
+        title = "//h1[@class='main-heading text-color-text-accent-2 babybear:pb-[24px]'].text()"
+        impressions = "//span[normalize-space()='410'].text()"
+        reposts = "button[id='ember1208'] span[aria-hidden='true'].text()"
         post_title = "body > div:nth-child(65) > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > main:nth-child(2) > div:nth-child(4) > div:nth-child(2) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1) > span:nth-child(1) > span:nth-child(1) > span:nth-child(1) > span:nth-child(1)"
         followers = "body > div:nth-child(65) > div:nth-child(4) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(1) > div:nth-child(1) > main:nth-child(2) > div:nth-child(4) > div:nth-child(2) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2) > a:nth-child(1) > span:nth-child(2) > span:nth-child(1)"
         main_image = "/html[1]/body[1]/div[5]/div[3]/div[1]/div[1]/div[2]/div[1]/div[1]/main[1]/div[4]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/a[1]/span[1]/div[1]/div[1]/img[1]"
         post_image = "/html[1]/body[1]/div[5]/div[3]/div[1]/div[1]/div[2]/div[1]/div[1]/main[1]/div[4]/div[1]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/article[1]/div[1]/div[1]/a[1]/div[1]/div[1]/img[1]"
         submissions = "/html/body/div[5]/div[3]/div/div/div[2]/div/div/main/div[4]/div/div[1]/div[2]/div/div/div/div/div/div/article/div/div[2]/div/a/div/div/div/div/span"
         post_comments = "/html[1]/body[1]/div[5]/div[3]/div[1]/div[1]/div[2]/div[1]/div[1]/main[1]/div[4]/div[1]/div[1]/div[3]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[7]/div[1]/div[1]/div[1]/ul[1]/li[2]/button[1]/span[1]"
-
-        pass
+        
+        data = {
+            'title': response.xpath(title).get(),
+            'impressions': response.xpath(impressions).get(),
+            'reposts': response.css(reposts).get(),
+            'post_title': response.css(post_title).get(),
+            'followers': response.css(followers).get(),
+            'main_image': response.xpath(main_image).get(),
+            'post_image': response.xpath(post_image).get(),
+            'submissions': response.xpath(submissions).get(),
+            'post_comments': response.xpath(post_comments).get(), 
+        }
+        yield data
+        

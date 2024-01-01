@@ -1,0 +1,11 @@
+12/30/2023 at 02:47:15 | INFO | __main__ | Running on Windows
+12/30/2023 at 02:47:27 | ERROR | __main__ | 'WebDriver' object has no attribute 'to_soup'
+12/30/2023 at 04:09:30 | INFO | __main__ | Running on Windows
+12/30/2023 at 04:09:42 | ERROR | __main__ | Message: invalid type: null, expected a string at line 1 column 12
+
+12/30/2023 at 04:12:35 | INFO | __main__ | Running on Windows
+12/30/2023 at 04:12:47 | ERROR | __main__ | Message: invalid type: null, expected a string at line 1 column 12
+
+12/30/2023 at 04:13:53 | INFO | __main__ | Running on Windows
+12/30/2023 at 04:17:48 | INFO | __main__ | Running on Windows
+12/30/2023 at 04:19:26 | INFO | __main__ | Running on Windows

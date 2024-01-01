@@ -45,13 +45,13 @@ def login_to_linkedin(driver):
 
 
 if __name__ == "__main__":
-    # setting up logging
+	# setting up logging
 	PATH = "./tmp/"
 	FILE = __file__.split('/')[-1] + ".log"
 	LOG_FILE = os.path.join(PATH, FILE)
 
-    logger.add(
-        LOG_FILE, format="{time:MM/DD/YYYY at HH:mm:ss} | {level} | {name} | {message}", diagnose=True, backtrace=True)
+	logger.add(
+		LOG_FILE, format="{time:MM/DD/YYYY at HH:mm:ss} | {level} | {name} | {message}", diagnose=True, backtrace=True)
 
 	# Check if the system is running on Windows or Linux
 	try:
@@ -69,8 +69,8 @@ if __name__ == "__main__":
 		if os.name == 'nt':
 			logger.info("Running on Windows")
 
-            # Set up headless Firefox
-            driver = webdriver.Firefox()
+			# Set up headless Firefox
+			driver = webdriver.Firefox()
 
 			# login function
 			url = login_to_linkedin(driver)
@@ -92,34 +92,34 @@ if __name__ == "__main__":
 			title = bs.get(data['title'])
 			print(title.text)
 
-            # Get the message after the click
-            # text = text_box.text
-            time.sleep(3)
-            # Close the driver out
-            driver.quit()
+			# Get the message after the click
+			# text = text_box.text
+			time.sleep(3)
+			# Close the driver out
+			driver.quit()
 
-        elif os.name == 'posix':
+		elif os.name == 'posix':
 
-            logger.info("Running ona POSIX-compatiblesystem (Like Ubuntu)")
-            # Set up headless Firefox
-            executable_firefox = "/usr/bin/firefox"
-            service = Service(executable_path=executable_firefox)
-            options = FirefoxOptions()
-            options.add_argument("--headless")
-            driver = webdriver.Firefox(service=service, options=options)
-            # login function
-            login_to_linkedin(driver)
+			logger.info("Running ona POSIX-compatiblesystem (Like Ubuntu)")
+			# Set up headless Firefox
+			executable_firefox = "/usr/bin/firefox"
+			service = Service(executable_path=executable_firefox)
+			options = FirefoxOptions()
+			options.add_argument("--headless")
+			driver = webdriver.Firefox(service=service, options=options)
+			# login function
+			login_to_linkedin(driver)
 
-            # NOW I NEED TO GET DATA FROM THE LINKED IN PAGE:
-            # (I can use BeautifulSoup for this)
-            soup = driver.to_soup()
-            print(soup.parse_html())
+			# NOW I NEED TO GET DATA FROM THE LINKED IN PAGE:
+			# (I can use BeautifulSoup for this)
+			soup = driver.to_soup()
+			print(soup.parse_html())
 
-            # Get the message after the click
-            # text = text_box.text
-            time.sleep(3)
-            # Close the driver out
-            driver.quit()
+			# Get the message after the click
+			# text = text_box.text
+			time.sleep(3)
+			# Close the driver out
+			driver.quit()
 
 	except Exception as e:
 		logger.error(e.with_traceback())
